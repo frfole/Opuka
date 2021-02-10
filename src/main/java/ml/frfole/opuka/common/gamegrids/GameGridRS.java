@@ -1,6 +1,5 @@
 package ml.frfole.opuka.common.gamegrids;
 
-import ml.frfole.opuka.common.GameGrid;
 import ml.frfole.opuka.common.Opuka;
 
 public class GameGridRS extends GameGrid {

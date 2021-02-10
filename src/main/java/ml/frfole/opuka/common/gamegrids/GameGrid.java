@@ -1,11 +1,11 @@
-package ml.frfole.opuka.common;
+package ml.frfole.opuka.common.gamegrids;
 
 import java.util.Random;
 
 public abstract class GameGrid {
   private final int height;
   private final int width;
-  private final int[][] grid;
+  protected final GameGridFieldType[][] grid;
   protected Random random;
   private int invalidCount = 0;
   private int minesCount = 0;
@@ -14,7 +14,7 @@ public abstract class GameGrid {
   public GameGrid(int height, int width) {
     this.height = height;
     this.width = width;
-    grid = new int[height][width];
+    grid = new GameGridFieldType[height][width];
     prepareGrid();
   }
 
@@ -26,7 +26,7 @@ public abstract class GameGrid {
     invalidCount = 0;
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
-        grid[y][x] = 0;
+        grid[y][x] = GameGridFieldType.UNKNOWN_CLEAR;
       }
     }
     state = GameGridState.READY;
@@ -41,8 +41,8 @@ public abstract class GameGrid {
     minesCount = 0;
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
-        if (grid[y][x] != -1) {
-          grid[y][x] = 0;
+        if (grid[y][x] != GameGridFieldType.INVALID) {
+          grid[y][x] = GameGridFieldType.UNKNOWN_CLEAR;
         }
       }
     }
@@ -56,8 +56,8 @@ public abstract class GameGrid {
    */
   public void setInvalid(int x, int y) {
     if (!(0 <= x && x < height && 0 <= y && y < width)) return;
-    if (grid[y][x] == -1) return;
-    grid[y][x] = -1;
+    if (grid[y][x] == GameGridFieldType.INVALID) return;
+    grid[y][x] = GameGridFieldType.INVALID;
     invalidCount += 1;
   }
 
@@ -72,14 +72,15 @@ public abstract class GameGrid {
     while (c < count) {
       int x = this.random.nextInt(width);
       int y = this.random.nextInt(height);
-      if (grid[y][x] == 9 || grid[y][x] == -1) continue;
+      if (grid[y][x] == GameGridFieldType.UNKNOWN_MINE || grid[y][x] == GameGridFieldType.INVALID) continue;
       minesCount += 1;
-      grid[y][x] = 9;
+      grid[y][x] = GameGridFieldType.UNKNOWN_MINE;
       c += 1;
       for (int cx = x - 1; cx <= x + 1; cx++) {
         for (int cy = y - 1; cy <= y + 1; cy++) {
           if (0 <= cx && cx < width && 0 <= cy && cy < height) {
-            grid[cy][cx] += (0 <= grid[cy][cx] && grid[cy][cx] <= 8) ? 1 : 0;
+            if (grid[cy][cx] != GameGridFieldType.UNKNOWN_MINE)
+              grid[cy][cx] = grid[cy][cx].unknownNextType();
           }
         }
       }
@@ -94,24 +95,20 @@ public abstract class GameGrid {
    */
   public boolean dig(int x, int y) {
     if (!(state == GameGridState.READY || state == GameGridState.PLAYING) || !(0 <= x && x < width && 0 <= y && y < height)) return false;
-    int value = grid[y][x];
-    if (1 <= value && value <= 8) {
-      grid[y][x] += 10;
+    if (grid[y][x].isUnknownNear()) {
+      grid[y][x] = grid[y][x].unknownNear2Clear();
     }
-    else if (value == 9) {
+    else if (grid[y][x] == GameGridFieldType.MINE) {
       state = GameGridState.FINISHED_MINE;
       return true;
     }
-    else if (value == 0) {
-      grid[y][x] = 10;
+    else if (grid[y][x] == GameGridFieldType.UNKNOWN_CLEAR) {
+      grid[y][x] = GameGridFieldType.CLEAR;
       for (int cx = x - 1; cx < x + 2; cx++) {
         for (int cy = y - 1; cy < y + 2; cy++) {
           if (0 <= cx && cx < width && 0 <= cy && cy < height) {
-            if ((cx - x == 0 || cy - y == 0) && 0 <= grid[cy][cx] && grid[cy][cx] <= 8) {
+            if (grid[cy][cx].isUnknownNotMine())
               this.dig(cx, cy);
-            } else if (1 <= grid[cy][cx] && grid[cy][cx] <= 8) {
-              grid[cy][cx] += 10;
-            }
           }
         }
       }
@@ -127,11 +124,11 @@ public abstract class GameGrid {
    */
   public void flag(int x, int y) {
     if (!(0 <= x && x < width && 0 <= y && y < height)) return;
-    if (0 <= grid[y][x] && grid[y][x] <= 9) {
-      grid[y][x] += 20;
+    if (grid[y][x].isUnknown()) {
+      grid[y][x] = grid[y][x].unknown2Flagged();
     }
-    else if (20 <= grid[y][x] && grid[y][x] <= 29) {
-      grid[y][x] -= 20;
+    else if (grid[y][x].isFlagged()) {
+      grid[y][x] = grid[y][x].flagged2Unknown();
     }
   }
 
@@ -164,7 +161,7 @@ public abstract class GameGrid {
    * Returns the {@link #grid}.
    * @return the {@link #grid}
    */
-  public int[][] getGrid() {
+  public GameGridFieldType[][] getGrid() {
     return grid;
   }
 
@@ -176,7 +173,7 @@ public abstract class GameGrid {
     int known = 0;
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
-        if (10 <= grid[y][x] && grid[y][x] <= 19)
+        if (grid[y][x].isKnown())
           known += 1;
       }
     }
@@ -199,14 +196,4 @@ public abstract class GameGrid {
     return minesCount;
   }
 
-  /**
-   * Possible states of {@link GameGrid}.
-   */
-  public enum GameGridState {
-    READY,
-    PLAYING,
-    FINISHED_MINE,
-    FINISHED_WIN,
-    FINISHED_OTHER
-  }
 }

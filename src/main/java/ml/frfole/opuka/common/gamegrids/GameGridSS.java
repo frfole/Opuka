@@ -1,7 +1,5 @@
 package ml.frfole.opuka.common.gamegrids;
 
-import ml.frfole.opuka.common.GameGrid;
-
 import java.util.Random;
 
 public class GameGridSS extends GameGrid {

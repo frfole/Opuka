@@ -1,9 +1,11 @@
-import ml.frfole.opuka.common.GameGrid;
+import junit.framework.Assert;
+import ml.frfole.opuka.common.gamegrids.GameGrid;
 import ml.frfole.opuka.common.GameGridInventory;
 import ml.frfole.opuka.common.Opuka;
 import ml.frfole.opuka.common.OpukaMethods;
-import ml.frfole.opuka.common.gamegrids.GameGridRS;
+import ml.frfole.opuka.common.gamegrids.GameGridFieldType;
 import ml.frfole.opuka.common.gamegrids.GameGridSS;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,10 +21,62 @@ public class GameGridTest {
 
   @Test
   public void populateTest() {
-    GameGrid grid = new GameGridRS(7, 65);
+    GameGrid grid = new GameGridSS(7, 65, 342224193951367169L);
     grid.populateWithMines(20);
-    System.out.println(grid.dig(3, 4));
-    prettyPrint(grid);
+    Assert.assertEquals(GameGridFieldType.UNKNOWN_CLEAR, grid.getGrid()[0][4]);
+    Assert.assertEquals(GameGridFieldType.UNKNOWN_NEAR_1, grid.getGrid()[0][0]);
+    Assert.assertEquals(GameGridFieldType.UNKNOWN_MINE, grid.getGrid()[1][1]);
+    Assert.assertEquals(GameGridFieldType.UNKNOWN_MINE, grid.getGrid()[2][8]);
+    Assert.assertEquals(GameGridFieldType.UNKNOWN_MINE, grid.getGrid()[3][8]);
+  }
+
+  @Test
+  public void digPopulateTest() {
+    GameGrid grid = new GameGridSS(7, 65, 342224193951367169L);
+    grid.populateWithMines(20);
+    Assert.assertEquals(GameGridFieldType.UNKNOWN_CLEAR, grid.getGrid()[0][4]);
+    Assert.assertEquals(GameGridFieldType.UNKNOWN_NEAR_1, grid.getGrid()[0][0]);
+    Assert.assertEquals(GameGridFieldType.UNKNOWN_MINE, grid.getGrid()[1][1]);
+    Assert.assertEquals(GameGridFieldType.UNKNOWN_MINE, grid.getGrid()[2][8]);
+    Assert.assertEquals(GameGridFieldType.UNKNOWN_MINE, grid.getGrid()[3][8]);
+    grid.dig(13, 5);
+    Assert.assertEquals(GameGridFieldType.NEAR_1, grid.getGrid()[2][0]);
+  }
+
+  @Test
+  public void flagDigPopulateTest() {
+    GameGrid grid = new GameGridSS(7, 65, 342224193951367169L);
+    grid.populateWithMines(20);
+    Assert.assertEquals(GameGridFieldType.UNKNOWN_CLEAR, grid.getGrid()[0][4]);
+    Assert.assertEquals(GameGridFieldType.UNKNOWN_NEAR_1, grid.getGrid()[0][0]);
+    Assert.assertEquals(GameGridFieldType.UNKNOWN_MINE, grid.getGrid()[1][1]);
+    Assert.assertEquals(GameGridFieldType.UNKNOWN_MINE, grid.getGrid()[2][8]);
+    Assert.assertEquals(GameGridFieldType.UNKNOWN_MINE, grid.getGrid()[3][8]);
+    grid.dig(13, 5);
+    Assert.assertEquals(GameGridFieldType.NEAR_1, grid.getGrid()[2][0]);
+    grid.flag(38, 0);
+    Assert.assertEquals(GameGridFieldType.UNKNOWN_FLAG_CLEAR, grid.getGrid()[0][38]);
+  }
+
+  private static void prettyPrint(GameGrid gameGrid) {
+    final GameGridFieldType[][] grid = gameGrid.getGrid();
+
+    for (int i = 0; i < gameGrid.getWidth() * 3 + 3; i++)
+      System.out.print("-");
+    System.out.println();
+
+    String a;
+    for (GameGridFieldType[] line : grid) {
+      System.out.print("| ");
+      for (GameGridFieldType i : line) {
+        System.out.print(i.getS() + " ");
+      }
+      System.out.println("|");
+    }
+
+    for (int i = 0; i < gameGrid.getWidth() * 3 + 3; i++)
+      System.out.print("-");
+    System.out.println();
   }
 
   class TestOpuka implements OpukaMethods {
@@ -48,34 +102,4 @@ public class GameGridTest {
     }
   }
 
-  private static void prettyPrint(GameGrid gameGrid) {
-    final int[][] grid = gameGrid.getGrid();
-
-    for (int i = 0; i < gameGrid.getWidth() * 3 + 3; i++)
-      System.out.print("-");
-    System.out.println();
-
-    String a;
-    for (int[] line : grid) {
-      System.out.print("| ");
-      for (int i : line) {
-        if (i == -1) { a = "@@";}
-        else if (i == 0) { a = "++";}
-        else if (1 <= i && i <= 8) { a = "+" + i;}
-        else if (i == 9) { a = "##";}
-        else if (i == 10) { a = "  ";}
-        else if (11 <= i && i <= 18) { a = " " + (i - 10);}
-        else if (i == 20) { a = "^ ";}
-        else if (21 <= i && i <= 28) { a = "^" + (i - 20);}
-        else if (i == 29) { a = "^#";}
-        else {a = String.valueOf(i);}
-        System.out.print(a + " ");
-      }
-      System.out.println("|");
-    }
-
-    for (int i = 0; i < gameGrid.getWidth() * 3 + 3; i++)
-      System.out.print("-");
-    System.out.println();
-  }
 }
