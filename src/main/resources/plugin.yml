@@ -1,0 +1,7 @@
+main: "ml.frfole.opuka.bukkit.OpukaBukkit"
+name: "Opuka"
+version: "0.1"
+api-version: 1.13
+commands:
+  opuka:
+    permission: default
