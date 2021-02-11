@@ -3,9 +3,7 @@ package ml.frfole.opuka.bukkit;
 import ml.frfole.opuka.common.gamegrids.GameGrid;
 import ml.frfole.opuka.common.GameGridInventory;
 import ml.frfole.opuka.common.Opuka;
-import ml.frfole.opuka.common.gamegrids.GameGridFieldType;
 import ml.frfole.opuka.common.gamegrids.GameGridRS;
-import ml.frfole.opuka.common.gamegrids.GameGridState;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -54,22 +52,22 @@ public class GameGridInventoryBukkit implements GameGridInventory, Listener {
   @Override
   public void update() {
     // TODO update logic
-    GameGridFieldType[][] grid = gameGrid.getGrid();
-    boolean isFinishedMine = gameGrid.getState() == GameGridState.FINISHED_MINE;
-    boolean isFinishedWin = gameGrid.getState() == GameGridState.FINISHED_WIN;
+    GameGrid.FieldType[][] grid = gameGrid.getGrid();
+    boolean isFinishedMine = gameGrid.getState() == GameGrid.State.FINISHED_MINE;
+    boolean isFinishedWin = gameGrid.getState() == GameGrid.State.FINISHED_WIN;
     long timeDelta = System.currentTimeMillis() - startTime;
     ItemStack item;
     ItemMeta meta;
     for (int y = 0; y < gameGrid.getHeight(); y++) {
       for (int x = 0; x < gameGrid.getWidth(); x++) {
-        GameGridFieldType v = grid[y][x];
+        GameGrid.FieldType v = grid[y][x];
         if (v.isUnknown()) {
           item = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
-          if (isFinishedMine && v == GameGridFieldType.UNKNOWN_MINE)
+          if (isFinishedMine && v == GameGrid.FieldType.UNKNOWN_MINE)
             item = new ItemStack(Material.RED_STAINED_GLASS_PANE);
-          if (isFinishedWin && v == GameGridFieldType.UNKNOWN_MINE)
+          if (isFinishedWin && v == GameGrid.FieldType.UNKNOWN_MINE)
             item = new ItemStack(Material.RED_STAINED_GLASS_PANE);
-        }/* else if (v == GameGridFieldType.CLEAR) {
+        }/* else if (v == FieldType.CLEAR) {
           item = new ItemStack(Material.AIR);
         } else if (11 <= v && v <= 18) {
           item = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE, v - 10);
@@ -97,8 +95,8 @@ public class GameGridInventoryBukkit implements GameGridInventory, Listener {
     inv.setItem(4, item);
 
     // (start | restart) item
-    item = new ItemStack(gameGrid.getState() == GameGridState.READY ? Material.LIME_CONCRETE_POWDER : Material.RED_CONCRETE_POWDER);
-    ItemUtils.setName(item, gameGrid.getState() == GameGridState.READY
+    item = new ItemStack(gameGrid.getState() == GameGrid.State.READY ? Material.LIME_CONCRETE_POWDER : Material.RED_CONCRETE_POWDER);
+    ItemUtils.setName(item, gameGrid.getState() == GameGrid.State.READY
             ? "§2Start"
             : "§4Reset");
     inv.setItem(0, item);
@@ -111,19 +109,19 @@ public class GameGridInventoryBukkit implements GameGridInventory, Listener {
     int slot = event.getRawSlot();
     if (slot < 0 || slot > inv.getSize() - 1) return;
     if (event.getClick().isLeftClick()) {
-      if (gameGrid.getState() == GameGridState.READY) this.startTime = System.currentTimeMillis();
-      if (gameGrid.getState() != GameGridState.READY && slot == 0) {
+      if (gameGrid.getState() == GameGrid.State.READY) this.startTime = System.currentTimeMillis();
+      if (gameGrid.getState() != GameGrid.State.READY && slot == 0) {
         gameGrid.reset();
         this.update();
         return;
       }
       gameGrid.dig(slot%9, slot/9);
-      if (gameGrid.getState() == GameGridState.FINISHED_MINE) System.out.println(event.getWhoClicked().getName() + " clicked on mine!");
-      if (gameGrid.getState() == GameGridState.FINISHED_WIN) System.out.println(event.getWhoClicked().getName() + " finished without exploding!");
+      if (gameGrid.getState() == GameGrid.State.FINISHED_MINE) System.out.println(event.getWhoClicked().getName() + " clicked on mine!");
+      if (gameGrid.getState() == GameGrid.State.FINISHED_WIN) System.out.println(event.getWhoClicked().getName() + " finished without exploding!");
       this.update();
     }
     else if (event.isRightClick()) {
-      if (gameGrid.getState() == GameGridState.READY) this.startTime = System.currentTimeMillis();
+      if (gameGrid.getState() == GameGrid.State.READY) this.startTime = System.currentTimeMillis();
       gameGrid.flag(slot%9, slot/9);
       this.update();
     }
