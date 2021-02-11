@@ -5,14 +5,17 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class GameGrid {
-  private final int height;
-  private final int width;
   protected FieldType[][] grid;
   protected Random random;
+  protected final byte[][] nearSearch = new byte[][]{{-1, 0}, {0, -1}, {0, 1}, {1, 0}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+  private final int height;
+  private final int width;
   private int invalidCount = 0;
   private int minesCount = 0;
   private State state = State.FINISHED_OTHER;
-  protected final byte[][] nearSearch = new byte[][]{{-1, 0}, {0, -1}, {0, 1}, {1, 0}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+  private State prevState = state;
+  private long timeStart = -1;
+  private long timeEnd = -1;
 
   public GameGrid(int height, int width) {
     this.height = height;
@@ -24,20 +27,22 @@ public abstract class GameGrid {
   /**
    * Sets all values of {@link #grid} to {@code 0}.
    */
-  private void prepareGrid() {
+  protected void prepareGrid() {
     minesCount = 0;
     invalidCount = 0;
     for (int y = 0; y < height; y++)
       for (int x = 0; x < width; x++)
         grid[y][x] = FieldType.UNKNOWN_CLEAR;
-    state = State.READY;
+    this.setState(State.READY);
   }
 
   /**
    * Resets {@link GameGrid}.
    */
   public void reset() {
-    state = State.READY;
+    this.setState(State.READY);
+    timeEnd = -1;
+    timeStart = -1;
     int mc = minesCount;
     minesCount = 0;
     for (int y = 0; y < height; y++)
@@ -45,18 +50,6 @@ public abstract class GameGrid {
         if (grid[y][x] != FieldType.INVALID)
           grid[y][x] = FieldType.UNKNOWN_CLEAR;
     populateWithMines(mc);
-  }
-
-  /**
-   * Sets field at x, y as invalid.
-   * @param x the x
-   * @param y the y
-   */
-  public void setInvalid(int x, int y) {
-    if (!(0 <= x && x < height && 0 <= y && y < width)) return;
-    if (grid[y][x] == FieldType.INVALID) return;
-    grid[y][x] = FieldType.INVALID;
-    invalidCount += 1;
   }
 
   /**
@@ -95,8 +88,8 @@ public abstract class GameGrid {
     if (type.isUnknownNear()) {
       grid[y][x] = type.unknown2Clear();
     }
-    else if (type == FieldType.MINE) {
-      state = State.FINISHED_MINE;
+    else if (type == FieldType.MINE || type == FieldType.UNKNOWN_MINE) {
+      setState(State.FINISHED_MINE);
       return;
     }
     else if (grid[y][x] == FieldType.UNKNOWN_CLEAR) {
@@ -109,7 +102,7 @@ public abstract class GameGrid {
           this.dig(cx, cy);
       }
     }
-    state = isDone() ? State.FINISHED_WIN : State.PLAYING;
+    setState(isDone() ? State.FINISHED_WIN : State.PLAYING);
   }
 
   /**
@@ -118,6 +111,7 @@ public abstract class GameGrid {
    * @param y the y
    */
   public void flag(int x, int y) {
+    if (!(state == State.READY || state == State.PLAYING)) return;
     if (isOut(x, y)) return;
     FieldType type = grid[y][x];
     if (type.isUnknown()) {
@@ -127,12 +121,49 @@ public abstract class GameGrid {
     }
   }
 
+  /**
+   * Sets {@link #timeStart} to {@link System#currentTimeMillis()}.
+   */
+  public void timeStart() {
+    this.timeStart = System.currentTimeMillis();
+  }
+
+  /**
+   * Sets {@link #timeEnd} to {@link System#currentTimeMillis()}.
+   */
+  public void timeEnd() {
+    this.timeEnd = System.currentTimeMillis();
+  }
+
+
+  /**
+   * Checks if x or y is outside {@link #grid}.
+   * @param x the x
+   * @param y the y
+   * @return {@code true} if x or y is outside, {@code false} otherwise
+   */
   public boolean isOut(int x, int y) {
     return x < 0 || x > width - 1 || y < 0 || y > height - 1;
   }
 
+  /**
+   * Checks if x and y are inside {@link #grid}.
+   * @param x the x
+   * @param y the y
+   * @return {@code true} if x and y are inside, {@code false} otherwise
+   */
   public boolean isIn(int x, int y) {
     return x > -1 && x < width && y > -1 && y < height;
+  }
+
+  /**
+   * Checks if all mines are discovered.
+   * @return {@code true} if all mines are discovered
+   */
+  public boolean isDone() {
+    AtomicInteger known = new AtomicInteger();
+    Arrays.stream(grid).forEach(fieldTypes -> Arrays.stream(fieldTypes).forEach(fieldType -> known.addAndGet(fieldType.isKnown() ? 1 : 0)));
+    return width * height - known.get() - invalidCount == minesCount;
   }
 
 
@@ -161,16 +192,6 @@ public abstract class GameGrid {
   }
 
   /**
-   * Checks if is all mines discovered.
-   * @return {@code true} if all mines is discovered
-   */
-  public boolean isDone() {
-    AtomicInteger known = new AtomicInteger();
-    Arrays.stream(grid).forEach(fieldTypes -> Arrays.stream(fieldTypes).forEach(fieldType -> known.addAndGet(fieldType.isKnown() ? 1 : 0)));
-    return width * height - known.get() - invalidCount == minesCount;
-  }
-
-  /**
    * Gets current {@link State} of this {@link GameGrid}.
    * @return current {@link State}
    */
@@ -179,11 +200,56 @@ public abstract class GameGrid {
   }
 
   /**
+   * Gets previous {@link State} of this {@link GameGrid}.
+   * @return previous {@link State}
+   */
+  public State getPrevState() {
+    return prevState;
+  }
+
+  /**
+   * Sets current {@link #state} and sets {@link #prevState}.
+   * @param newState the new {@link State}
+   */
+  protected void setState(State newState) {
+    this.prevState = this.state;
+    this.state = newState;
+  }
+
+  /**
    * Gets count of mines.
    * @return count of mines
    */
   public int getMinesCount() {
     return minesCount;
+  }
+
+  /**
+   * Sets field at x, y as invalid.
+   * @param x the x
+   * @param y the y
+   */
+  public void setInvalid(int x, int y) {
+    if (isOut(x, y)) return;
+    if (grid[y][x] == FieldType.INVALID) return;
+    grid[y][x] = FieldType.INVALID;
+    invalidCount += 1;
+  }
+
+  /**
+   * Gets {@link #timeStart}.
+   * @return {@link #timeStart}
+   */
+  public long getTimeStart() {
+    return timeStart;
+  }
+
+  /**
+   * Gets {@link #timeEnd}.
+   * @return {@link #timeEnd}
+   */
+  public long getTimeEnd() {
+    return timeEnd;
   }
 
   /**
@@ -373,6 +439,14 @@ public abstract class GameGrid {
     PLAYING,
     FINISHED_MINE,
     FINISHED_WIN,
-    FINISHED_OTHER
+    FINISHED_OTHER;
+
+    /**
+     * Checks if {@link State} is finished state.
+     * @return {@code true} if is finished state, {@code false} otherwise
+     */
+    public boolean isFinished() {
+      return this == FINISHED_MINE || this == FINISHED_WIN || this == FINISHED_OTHER;
+    }
   }
 }

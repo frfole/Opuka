@@ -12,83 +12,40 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
 import java.util.Arrays;
+import java.util.UUID;
 
-public class GameGridInventoryBukkit implements GameGridInventory, Listener {
+public class GameGridInventoryBukkit extends GameGridInventory implements Listener{
   private final Inventory inv;
-  private final Player player;
-  private final GameGrid gameGrid;
-  private long startTime = 0;
+  private final UUID owner;
   private final int taskNumber;
 
-  public GameGridInventoryBukkit(int size, Player player) {
-    inv = Bukkit.createInventory(null, size, "Opuka");
+  public GameGridInventoryBukkit(int size, UUID uuid) {
+    this.inv = Bukkit.createInventory(null, size, "Opuka");
     Bukkit.getPluginManager().registerEvents(this, OpukaBukkit.getInstance());
     this.taskNumber = Bukkit.getScheduler().scheduleSyncRepeatingTask(OpukaBukkit.getInstance(), this::tick, 10, 10);
-    this.player = player;
+    this.owner = uuid;
     this.gameGrid = new GameGridRS(6, 9);
     this.gameGrid.setInvalid(0, 0); // start / reset
     this.gameGrid.setInvalid(4, 0); // time
     this.gameGrid.populateWithMines(5);
-    update();
-  }
-
-  private void tick() {
-    this.update();
-  }
-
-  @Override
-  public void open() {
-    this.player.openInventory(this.inv);
-  }
-
-  @Override
-  public void close() {
-    Bukkit.getScheduler().cancelTask(this.taskNumber);
+    this.open(uuid);
   }
 
   @Override
   public void update() {
-    // TODO update logic
     GameGrid.FieldType[][] grid = gameGrid.getGrid();
-    boolean isFinishedMine = gameGrid.getState() == GameGrid.State.FINISHED_MINE;
-    boolean isFinishedWin = gameGrid.getState() == GameGrid.State.FINISHED_WIN;
-    long timeDelta = System.currentTimeMillis() - startTime;
-    ItemStack item;
-    ItemMeta meta;
+    long timeDelta = (gameGrid.getState() != GameGrid.State.PLAYING ? gameGrid.getTimeEnd() : System.currentTimeMillis()) - gameGrid.getTimeStart();
     for (int y = 0; y < gameGrid.getHeight(); y++) {
       for (int x = 0; x < gameGrid.getWidth(); x++) {
-        GameGrid.FieldType v = grid[y][x];
-        if (v.isUnknown()) {
-          item = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
-          if (isFinishedMine && v == GameGrid.FieldType.UNKNOWN_MINE)
-            item = new ItemStack(Material.RED_STAINED_GLASS_PANE);
-          if (isFinishedWin && v == GameGrid.FieldType.UNKNOWN_MINE)
-            item = new ItemStack(Material.RED_STAINED_GLASS_PANE);
-        }/* else if (v == FieldType.CLEAR) {
-          item = new ItemStack(Material.AIR);
-        } else if (11 <= v && v <= 18) {
-          item = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE, v - 10);
-        } else if (v == 19) {
-          item = new ItemStack(Material.RED_STAINED_GLASS_PANE);
-        } else if (20 <= v && v <= 29) {
-          item = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-          if (isFinishedWin && v == 29)
-            item = new ItemStack(Material.RED_STAINED_GLASS_PANE);
-        }
-        else {
-          item = new ItemStack(Material.RED_NETHER_BRICKS);
-        }
-        inv.setItem(y*9 + x, item);*/
+        this.inv.setItem(y*9 + x, ItemUtils.getItem(grid[y][x], gameGrid.getState()));
       }
     }
     // time item
-    item = new ItemStack(Material.SIGN);
+    ItemStack item = new ItemStack(Material.SIGN);
     ItemUtils.setName(item, "Info");
     ItemUtils.setLore(item, Arrays.asList(
-            "§7Time: " + ((timeDelta / 60000) % 60 ) + ":" + ((timeDelta / 1000) % 60),
+            "§7Time: " + ((timeDelta / 60000) % 60 ) + ":" + ((timeDelta / 1000) % 60 + "." + (timeDelta % 1000)),
             "§7Mines count: " + gameGrid.getMinesCount(),
             "§7Watchers count: " + (inv.getViewers().size() - 1)
     ));
@@ -102,28 +59,37 @@ public class GameGridInventoryBukkit implements GameGridInventory, Listener {
     inv.setItem(0, item);
   }
 
+  @Override
+  public void destroy() {
+    Bukkit.getScheduler().cancelTask(this.taskNumber);
+    this.inv.getViewers().forEach(e -> {if (!e.getUniqueId().equals(this.owner)) e.closeInventory();});
+  }
+
+  @Override
+  public void open(UUID uuid) {
+    Player p = Bukkit.getPlayer(uuid);
+    if (p != null && p.isOnline()) p.openInventory(this.inv);
+  }
+
   @EventHandler
   public void onClick(org.bukkit.event.inventory.InventoryClickEvent event) {
-    if (!event.getInventory().equals(inv) || !event.getWhoClicked().equals(player)) return;
+    if (!event.getInventory().equals(inv) || !event.getWhoClicked().getUniqueId().equals(this.owner)) return;
     event.setCancelled(true);
     int slot = event.getRawSlot();
     if (slot < 0 || slot > inv.getSize() - 1) return;
     if (event.getClick().isLeftClick()) {
-      if (gameGrid.getState() == GameGrid.State.READY) this.startTime = System.currentTimeMillis();
       if (gameGrid.getState() != GameGrid.State.READY && slot == 0) {
         gameGrid.reset();
-        this.update();
         return;
       }
-      gameGrid.dig(slot%9, slot/9);
-      if (gameGrid.getState() == GameGrid.State.FINISHED_MINE) System.out.println(event.getWhoClicked().getName() + " clicked on mine!");
-      if (gameGrid.getState() == GameGrid.State.FINISHED_WIN) System.out.println(event.getWhoClicked().getName() + " finished without exploding!");
-      this.update();
+      super.leftClick(slot, 9);
     }
     else if (event.isRightClick()) {
-      if (gameGrid.getState() == GameGrid.State.READY) this.startTime = System.currentTimeMillis();
-      gameGrid.flag(slot%9, slot/9);
-      this.update();
+      if (gameGrid.getState() != GameGrid.State.READY && slot == 0) {
+        gameGrid.reset();
+        return;
+      }
+      super.rightClick(slot, 9);
     }
   }
 

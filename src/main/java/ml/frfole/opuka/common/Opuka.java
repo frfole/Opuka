@@ -9,10 +9,6 @@ public class Opuka {
     Opuka.instance = this;
   }
 
-  public void tick() {
-
-  }
-
   public static Opuka getInstance() {
     return Opuka.instance;
   }

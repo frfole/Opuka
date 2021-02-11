@@ -20,7 +20,7 @@ public class OpukaBukkit extends JavaPlugin {
   @Override
   public void onEnable() {
     super.onEnable();
-    new Opuka(new BukkitMethods(this, System.currentTimeMillis()));
+    new Opuka(new BukkitMethods(System.currentTimeMillis()));
     Bukkit.getPluginCommand("opuka").setExecutor(new OpukaCommand());
   }
 

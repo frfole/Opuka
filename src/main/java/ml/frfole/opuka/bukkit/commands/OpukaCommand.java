@@ -16,8 +16,7 @@ public class OpukaCommand implements TabExecutor {
   public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
     if (commandSender instanceof Player) {
       Player p = (Player) commandSender;
-      GameGridInventory ggi = new GameGridInventoryBukkit(54, p);
-      ggi.open();
+      GameGridInventory ggi = new GameGridInventoryBukkit(54, p.getUniqueId());
       Opuka.getInstance().methods.setPlayerGGI(p.getUniqueId(), ggi);
     }
     return true;

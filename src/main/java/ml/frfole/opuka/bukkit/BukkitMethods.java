@@ -11,11 +11,9 @@ import java.util.UUID;
 
 public class BukkitMethods implements OpukaMethods {
   private final Random random;
-  private final OpukaBukkit plugin;
   private final HashMap<UUID, GameGridInventory> player2GGI = new HashMap<>();
 
-  public BukkitMethods(OpukaBukkit plugin, long seed) {
-    this.plugin = plugin;
+  public BukkitMethods(long seed) {
     this.random = new Random(seed);
   }
 
@@ -36,7 +34,7 @@ public class BukkitMethods implements OpukaMethods {
     if (ggi != null) {
       if (ggi instanceof Listener)
         HandlerList.unregisterAll((Listener) ggi);
-      ggi.close();
+      ggi.destroy();
     }
     return ggi;
   }
