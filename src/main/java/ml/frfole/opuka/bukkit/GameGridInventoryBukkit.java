@@ -9,13 +9,17 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 import java.util.UUID;
 
-public class GameGridInventoryBukkit extends GameGridInventory implements Listener{
+public class GameGridInventoryBukkit extends GameGridInventory implements Listener {
+  public static final int SLOT_INFO = 4;
+  public static final int SLOT_RESET_START = 0;
+
   private final Inventory inv;
   private final UUID owner;
   private final int taskNumber;
@@ -62,34 +66,38 @@ public class GameGridInventoryBukkit extends GameGridInventory implements Listen
   @Override
   public void destroy() {
     Bukkit.getScheduler().cancelTask(this.taskNumber);
-    this.inv.getViewers().forEach(e -> {if (!e.getUniqueId().equals(this.owner)) e.closeInventory();});
+    this.inv.getViewers().forEach(p -> {
+      if (!super.isOwner(p.getUniqueId()))
+        p.closeInventory();
+    });
   }
 
   @Override
   public void open(UUID uuid) {
-    Player p = Bukkit.getPlayer(uuid);
+    final Player p = Bukkit.getPlayer(uuid);
     if (p != null && p.isOnline()) p.openInventory(this.inv);
   }
 
   @EventHandler
-  public void onClick(org.bukkit.event.inventory.InventoryClickEvent event) {
-    if (!event.getInventory().equals(inv) || !event.getWhoClicked().getUniqueId().equals(this.owner)) return;
+  public void onClick(final InventoryClickEvent event) {
+    final UUID performerId = event.getWhoClicked().getUniqueId();
+    if (!event.getInventory().equals(inv) || !super.isOwner(performerId)) return;
     event.setCancelled(true);
-    int slot = event.getRawSlot();
+    final int slot = event.getRawSlot();
     if (slot < 0 || slot > inv.getSize() - 1) return;
-    if (event.getClick().isLeftClick()) {
-      if (gameGrid.getState() != GameGrid.State.READY && slot == 0) {
+    if (event.isLeftClick()) {
+      if (gameGrid.getState() != GameGrid.State.READY && slot == SLOT_RESET_START) {
         gameGrid.reset();
-        return;
+      } else {
+        super.leftClick(slot, 9, performerId);
       }
-      super.leftClick(slot, 9);
     }
     else if (event.isRightClick()) {
-      if (gameGrid.getState() != GameGrid.State.READY && slot == 0) {
+      if (gameGrid.getState() != GameGrid.State.READY && slot == SLOT_RESET_START) {
         gameGrid.reset();
-        return;
+      } else {
+        super.rightClick(slot, 9, performerId);
       }
-      super.rightClick(slot, 9);
     }
   }
 

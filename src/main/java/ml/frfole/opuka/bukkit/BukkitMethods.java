@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
 
-public class BukkitMethods implements OpukaMethods {
+public class BukkitMethods extends OpukaMethods {
   private final Random random;
   private final HashMap<UUID, GameGridInventory> player2GGI = new HashMap<>();
 
@@ -18,29 +18,12 @@ public class BukkitMethods implements OpukaMethods {
   }
 
   @Override
-  public Random getRandom() {
-    return this.random;
-  }
-
-  @Override
-  public void setPlayerGGI(UUID uuid, GameGridInventory ggi) {
-    removePlayerGGI(uuid);
-    player2GGI.put(uuid, ggi);
-  }
-
-  @Override
   public GameGridInventory removePlayerGGI(UUID uuid) {
     GameGridInventory ggi = player2GGI.remove(uuid);
-    if (ggi != null) {
-      if (ggi instanceof Listener)
-        HandlerList.unregisterAll((Listener) ggi);
+    if (ggi != null && ggi.isOwner(uuid)) {
+      HandlerList.unregisterAll((Listener) ggi);
       ggi.destroy();
     }
     return ggi;
-  }
-
-  @Override
-  public GameGridInventory getPlayerGGI(UUID uuid) {
-    return player2GGI.get(uuid);
   }
 }

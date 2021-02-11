@@ -77,27 +77,7 @@ public class GameGridTest {
     System.out.println();
   }
 
-  class TestOpuka implements OpukaMethods {
-    private final Random random = new Random();
-    @Override
-    public Random getRandom() {
-      return random;
-    }
-
-    @Override
-    public void setPlayerGGI(UUID uuid, GameGridInventory ggi) {
-
-    }
-
-    @Override
-    public GameGridInventory removePlayerGGI(UUID uuid) {
-      return null;
-    }
-
-    @Override
-    public GameGridInventory getPlayerGGI(UUID uuid) {
-      return null;
-    }
+  class TestOpuka extends OpukaMethods {
   }
 
 }
