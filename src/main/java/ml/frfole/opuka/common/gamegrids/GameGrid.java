@@ -7,11 +7,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class GameGrid {
   private final int height;
   private final int width;
-  protected final FieldType[][] grid;
+  protected FieldType[][] grid;
   protected Random random;
   private int invalidCount = 0;
   private int minesCount = 0;
   private State state = State.FINISHED_OTHER;
+  protected final byte[][] nearSearch = new byte[][]{{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 
   public GameGrid(int height, int width) {
     this.height = height;
@@ -26,11 +27,9 @@ public abstract class GameGrid {
   private void prepareGrid() {
     minesCount = 0;
     invalidCount = 0;
-    for (int y = 0; y < height; y++) {
-      for (int x = 0; x < width; x++) {
+    for (int y = 0; y < height; y++)
+      for (int x = 0; x < width; x++)
         grid[y][x] = FieldType.UNKNOWN_CLEAR;
-      }
-    }
     state = State.READY;
   }
 
@@ -41,13 +40,10 @@ public abstract class GameGrid {
     state = State.READY;
     int mc = minesCount;
     minesCount = 0;
-    for (int y = 0; y < height; y++) {
-      for (int x = 0; x < width; x++) {
-        if (grid[y][x] != FieldType.INVALID) {
+    for (int y = 0; y < height; y++)
+      for (int x = 0; x < width; x++)
+        if (grid[y][x] != FieldType.INVALID)
           grid[y][x] = FieldType.UNKNOWN_CLEAR;
-        }
-      }
-    }
     populateWithMines(mc);
   }
 
@@ -69,22 +65,20 @@ public abstract class GameGrid {
    */
   public void populateWithMines(int count) {
     if (state != State.READY) return;
-    int c = 0;
     if (count > width * height - invalidCount) return;
-    while (c < count) {
+    int c = minesCount;
+    while (minesCount - c < count) {
       int x = this.random.nextInt(width);
       int y = this.random.nextInt(height);
       if (grid[y][x] == FieldType.UNKNOWN_MINE || grid[y][x] == FieldType.INVALID) continue;
       minesCount += 1;
       grid[y][x] = FieldType.UNKNOWN_MINE;
-      c += 1;
-      for (int cx = x - 1; cx <= x + 1; cx++) {
-        for (int cy = y - 1; cy <= y + 1; cy++) {
-          if (0 <= cx && cx < width && 0 <= cy && cy < height) {
-            if (grid[cy][cx] != FieldType.UNKNOWN_MINE)
-              grid[cy][cx] = grid[cy][cx].unknownNextType();
-          }
-        }
+      int cx, cy;
+      for (byte[] i : nearSearch) {
+        cx = x + i[0];
+        cy = y + i[1];
+        if (isIn(cx, cy) && grid[cy][cx] != FieldType.UNKNOWN_MINE)
+          grid[cy][cx] = grid[cy][cx].unknownNextType();
       }
     }
   }
@@ -95,7 +89,8 @@ public abstract class GameGrid {
    * @param y the y
    */
   public void dig(int x, int y) {
-    if (!(state == State.READY || state == State.PLAYING) || !(0 <= x && x < width && 0 <= y && y < height)) return;
+    if (!(state == State.READY || state == State.PLAYING)) return;
+    if (isOut(x, y)) return;
     if (grid[y][x].isUnknownNear()) {
       grid[y][x] = grid[y][x].unknown2Clear();
     }
@@ -105,14 +100,10 @@ public abstract class GameGrid {
     }
     else if (grid[y][x] == FieldType.UNKNOWN_CLEAR) {
       grid[y][x] = FieldType.CLEAR;
-      for (int cx = x - 1; cx < x + 2; cx++) {
-        for (int cy = y - 1; cy < y + 2; cy++) {
-          if (0 <= cx && cx < width && 0 <= cy && cy < height) {
-            if (grid[cy][cx].isUnknownNotMine())
-              this.dig(cx, cy);
-          }
-        }
-      }
+      for (int cx = x - 1; cx < x + 2; cx++)
+        for (int cy = y - 1; cy < y + 2; cy++)
+          if (isIn(cx, cy) && grid[cy][cx].isUnknownNotMine())
+            this.dig(cx, cy);
     }
     state = isDone() ? State.FINISHED_WIN : State.PLAYING;
   }
@@ -123,13 +114,20 @@ public abstract class GameGrid {
    * @param y the y
    */
   public void flag(int x, int y) {
-    if (!(0 <= x && x < width && 0 <= y && y < height)) return;
+    if (isOut(x, y)) return;
     if (grid[y][x].isUnknown()) {
       grid[y][x] = grid[y][x].unknown2Flagged();
-    }
-    else if (grid[y][x].isFlagged()) {
+    } else if (grid[y][x].isFlagged()) {
       grid[y][x] = grid[y][x].flagged2Unknown();
     }
+  }
+
+  public boolean isOut(int x, int y) {
+    return x < 0 || x > width - 1 || y < 0 || y > height - 1;
+  }
+
+  public boolean isIn(int x, int y) {
+    return x > -1 && x < width && y > -1 && y < height;
   }
 
 
