@@ -12,7 +12,7 @@ public abstract class GameGrid {
   private int invalidCount = 0;
   private int minesCount = 0;
   private State state = State.FINISHED_OTHER;
-  protected final byte[][] nearSearch = new byte[][]{{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+  protected final byte[][] nearSearch = new byte[][]{{-1, 0}, {0, -1}, {0, 1}, {1, 0}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
 
   public GameGrid(int height, int width) {
     this.height = height;
@@ -91,19 +91,23 @@ public abstract class GameGrid {
   public void dig(int x, int y) {
     if (!(state == State.READY || state == State.PLAYING)) return;
     if (isOut(x, y)) return;
-    if (grid[y][x].isUnknownNear()) {
-      grid[y][x] = grid[y][x].unknown2Clear();
+    FieldType type = grid[y][x];
+    if (type.isUnknownNear()) {
+      grid[y][x] = type.unknown2Clear();
     }
-    else if (grid[y][x] == FieldType.MINE) {
+    else if (type == FieldType.MINE) {
       state = State.FINISHED_MINE;
       return;
     }
     else if (grid[y][x] == FieldType.UNKNOWN_CLEAR) {
       grid[y][x] = FieldType.CLEAR;
-      for (int cx = x - 1; cx < x + 2; cx++)
-        for (int cy = y - 1; cy < y + 2; cy++)
-          if (isIn(cx, cy) && grid[cy][cx].isUnknownNotMine())
-            this.dig(cx, cy);
+      int cx, cy;
+      for (byte[] i : nearSearch) {
+        cx = x + i[0];
+        cy = y + i[1];
+        if (isIn(cx, cy) && grid[cy][cx].isUnknownNotMine())
+          this.dig(cx, cy);
+      }
     }
     state = isDone() ? State.FINISHED_WIN : State.PLAYING;
   }
