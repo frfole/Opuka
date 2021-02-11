@@ -119,10 +119,11 @@ public abstract class GameGrid {
    */
   public void flag(int x, int y) {
     if (isOut(x, y)) return;
-    if (grid[y][x].isUnknown()) {
-      grid[y][x] = grid[y][x].unknown2Flagged();
-    } else if (grid[y][x].isFlagged()) {
-      grid[y][x] = grid[y][x].flagged2Unknown();
+    FieldType type = grid[y][x];
+    if (type.isUnknown()) {
+      grid[y][x] = type.unknown2Flagged();
+    } else if (type.isFlagged()) {
+      grid[y][x] = type.flagged2Unknown();
     }
   }
 
