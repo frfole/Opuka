@@ -10,8 +10,6 @@ import java.util.Random;
 import java.util.UUID;
 
 public class BukkitMethods extends OpukaMethods {
-  private final Random random;
-  private final HashMap<UUID, GameGridInventory> player2GGI = new HashMap<>();
 
   public BukkitMethods(long seed) {
     this.random = new Random(seed);
@@ -19,10 +17,10 @@ public class BukkitMethods extends OpukaMethods {
 
   @Override
   public GameGridInventory removePlayerGGI(UUID uuid) {
-    GameGridInventory ggi = player2GGI.remove(uuid);
+    GameGridInventory ggi = uuid2GGI.remove(uuid);
     if (ggi != null && ggi.isOwner(uuid)) {
-      HandlerList.unregisterAll((Listener) ggi);
       ggi.destroy();
+      HandlerList.unregisterAll((Listener) ggi);
     }
     return ggi;
   }

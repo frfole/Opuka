@@ -5,7 +5,7 @@ import java.util.Random;
 import java.util.UUID;
 
 public abstract class OpukaMethods {
-  protected Random random;
+  protected Random random = new Random();
   protected final HashMap<UUID, GameGridInventory> uuid2GGI = new HashMap<>();
 
   /**
@@ -28,7 +28,7 @@ public abstract class OpukaMethods {
   }
 
   public GameGridInventory removePlayerGGI(UUID uuid) {
-    GameGridInventory ggi = uuid2GGI.get(uuid);
+    GameGridInventory ggi = uuid2GGI.remove(uuid);
     if (ggi != null && ggi.isOwner(uuid)) {
       ggi.destroy();
     }

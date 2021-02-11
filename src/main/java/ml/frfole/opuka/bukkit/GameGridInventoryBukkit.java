@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -21,18 +22,17 @@ public class GameGridInventoryBukkit extends GameGridInventory implements Listen
   public static final int SLOT_RESET_START = 0;
 
   private final Inventory inv;
-  private final UUID owner;
   private final int taskNumber;
 
-  public GameGridInventoryBukkit(int size, UUID uuid) {
+  public GameGridInventoryBukkit(int size, UUID uuid, int minesCount) {
     this.inv = Bukkit.createInventory(null, size, "Opuka");
-    Bukkit.getPluginManager().registerEvents(this, OpukaBukkit.getInstance());
+    Bukkit.getPluginManager().registerEvents((Listener) this, OpukaBukkit.getInstance());
     this.taskNumber = Bukkit.getScheduler().scheduleSyncRepeatingTask(OpukaBukkit.getInstance(), this::tick, 10, 10);
-    this.owner = uuid;
+    this.ownerId = uuid;
     this.gameGrid = new GameGridRS(6, 9);
     this.gameGrid.setInvalid(0, 0); // start / reset
     this.gameGrid.setInvalid(4, 0); // time
-    this.gameGrid.populateWithMines(5);
+    this.gameGrid.populateWithMines(minesCount);
     this.open(uuid);
   }
 
@@ -67,7 +67,7 @@ public class GameGridInventoryBukkit extends GameGridInventory implements Listen
   public void destroy() {
     Bukkit.getScheduler().cancelTask(this.taskNumber);
     this.inv.getViewers().forEach(p -> {
-      if (!super.isOwner(p.getUniqueId()))
+      if (p != null && !super.isOwner(p.getUniqueId()))
         p.closeInventory();
     });
   }
@@ -80,9 +80,11 @@ public class GameGridInventoryBukkit extends GameGridInventory implements Listen
 
   @EventHandler
   public void onClick(final InventoryClickEvent event) {
+    // TODO move to own class
     final UUID performerId = event.getWhoClicked().getUniqueId();
-    if (!event.getInventory().equals(inv) || !super.isOwner(performerId)) return;
+    if (!event.getInventory().equals(inv)) return;
     event.setCancelled(true);
+    if (!super.isOwner(performerId)) return;
     final int slot = event.getRawSlot();
     if (slot < 0 || slot > inv.getSize() - 1) return;
     if (event.isLeftClick()) {
@@ -103,7 +105,10 @@ public class GameGridInventoryBukkit extends GameGridInventory implements Listen
 
   @EventHandler
   public void onClose(final InventoryCloseEvent event) {
+    // TODO move to own class
     if (!event.getInventory().equals(inv)) return;
-    Opuka.getInstance().methods.removePlayerGGI(event.getPlayer().getUniqueId());
+    final UUID uuid = event.getPlayer().getUniqueId();
+    if (!super.isOwner(uuid)) return;
+    Opuka.getInstance().methods.removePlayerGGI(uuid);
   }
 }

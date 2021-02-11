@@ -3,6 +3,7 @@ import ml.frfole.opuka.common.gamegrids.GameGrid;
 import ml.frfole.opuka.common.GameGridInventory;
 import ml.frfole.opuka.common.Opuka;
 import ml.frfole.opuka.common.OpukaMethods;
+import ml.frfole.opuka.common.gamegrids.GameGridRS;
 import ml.frfole.opuka.common.gamegrids.GameGridSS;
 import org.junit.Before;
 import org.junit.Test;

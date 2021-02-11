@@ -57,7 +57,7 @@ public abstract class GameGrid {
    * @param count the amount of mines
    */
   public void populateWithMines(int count) {
-    if (state != State.READY) return;
+    if (state != State.READY || count < 1) return;
     if (count > width * height - invalidCount) return;
     int c = minesCount;
     while (minesCount - c < count) {
