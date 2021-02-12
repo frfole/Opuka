@@ -1,6 +1,7 @@
 package ml.frfole.opuka.bukkit.listeners;
 
 import ml.frfole.opuka.bukkit.inventory.GGInvBukkit;
+import ml.frfole.opuka.common.inventory.ConfigInventory;
 import ml.frfole.opuka.common.inventory.GameGridInventory;
 import ml.frfole.opuka.common.Opuka;
 import ml.frfole.opuka.common.gamegrid.GameGrid;
@@ -18,6 +19,12 @@ public class InventoryListener implements Listener {
     final UUID performerId = event.getWhoClicked().getUniqueId();
     if (Opuka.getInstance().methods.isSpectator(performerId)) {
       event.setCancelled(true);
+      return;
+    }
+    if (Opuka.getInstance().methods.isInConfig(performerId)) {
+      event.setCancelled(true);
+      final ConfigInventory ci = Opuka.getInstance().methods.getPlayerCI(performerId);
+      ci.rightClick(event.getRawSlot(), 9, performerId);
       return;
     }
     final GameGridInventory ggi = Opuka.getInstance().methods.getPlayerGGI(performerId);

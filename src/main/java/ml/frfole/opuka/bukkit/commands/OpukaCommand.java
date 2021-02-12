@@ -1,7 +1,11 @@
 package ml.frfole.opuka.bukkit.commands;
 
+import ml.frfole.opuka.bukkit.inventory.CInvBukkit;
+import ml.frfole.opuka.bukkit.inventory.GGInvBukkit;
 import ml.frfole.opuka.common.commands.OpukaCommandBase;
 import ml.frfole.opuka.common.Opuka;
+import ml.frfole.opuka.common.inventory.ConfigInventory;
+import ml.frfole.opuka.common.inventory.GameGridInventory;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -18,23 +22,26 @@ public class OpukaCommand extends OpukaCommandBase implements TabExecutor {
     if (sender instanceof Player) {
       final UUID performer = ((Player) sender).getUniqueId();
       if (args.length == 0) {
-        super.play(performer, 54, 8);
+        play(performer, 54, 8);
       }
       else if (args.length == 1) {
         if (args[0].equalsIgnoreCase("play") || args[0].equalsIgnoreCase("p")) {
-          super.play(performer, 54, 8);
+          play(performer, 54, 8);
         }
       }
       else {
         if (args[0].equalsIgnoreCase("play") || args[0].equalsIgnoreCase("p")) {
           if (isInt(args[1])) {
-            super.play(performer, 54, Integer.parseInt(args[1]));
+            play(performer, 54, Integer.parseInt(args[1]));
+          }
+          else if (args[1].equalsIgnoreCase("c") || args[1].equalsIgnoreCase("config")) {
+            config(performer);
           }
         }
         if (args[0].equalsIgnoreCase("spectate") || args[0].equalsIgnoreCase("s")) {
           final Player targetP = Bukkit.getPlayer(args[1]);
           if (targetP != null && targetP.isOnline()) {
-            super.spectate(performer, targetP.getUniqueId());
+            spectate(performer, targetP.getUniqueId());
           }
         }
       }
@@ -51,6 +58,9 @@ public class OpukaCommand extends OpukaCommandBase implements TabExecutor {
       if (args[0].equalsIgnoreCase("spectate") || args[0].equalsIgnoreCase("s")) {
         return Arrays.asList(getPlayingNames());
       }
+      else if (args[0].equalsIgnoreCase("play") || args[0].equalsIgnoreCase("p")) {
+        return Arrays.asList("c", "config");
+      }
     }
     return new ArrayList<>();
   }
@@ -62,6 +72,16 @@ public class OpukaCommand extends OpukaCommandBase implements TabExecutor {
     } catch(NumberFormatException e){
       return false;
     }
+  }
+
+  @Override
+  protected void config(UUID performer) {
+    Opuka.getInstance().methods.setPlayerCI(performer, new CInvBukkit(performer));
+  }
+
+  @Override
+  protected void play(UUID performer, int size, int minesCount) {
+    Opuka.getInstance().methods.setPlayerGGI(performer, new GGInvBukkit(size, performer, minesCount));
   }
 
   @Override

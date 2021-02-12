@@ -3,7 +3,6 @@ package ml.frfole.opuka.bukkit.inventory;
 import ml.frfole.opuka.bukkit.ItemUtils;
 import ml.frfole.opuka.common.gamegrid.GameGrid;
 import ml.frfole.opuka.common.inventory.GameGridInventory;
-import ml.frfole.opuka.common.gamegrid.GameGridRS;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -14,18 +13,11 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 public class GGInvBukkit extends GameGridInventory {
-  public static final int SLOT_INFO = 4;
-  public static final int SLOT_RESET_START = 0;
-
   private final Inventory inv;
 
   public GGInvBukkit(int size, UUID uuid, int minesCount) {
-    this.inv = Bukkit.createInventory(null, size, "Opuka");
-    this.ownerId = uuid;
-    this.gameGrid = new GameGridRS(6, 9);
-    this.gameGrid.setInvalid(0, 0); // start / reset
-    this.gameGrid.setInvalid(4, 0); // time
-    this.gameGrid.populateWithMines(minesCount);
+    super(uuid, 6, 9, minesCount);
+    this.inv = Bukkit.createInventory(null, size, invName);
     this.open(uuid);
   }
 
@@ -42,9 +34,10 @@ public class GGInvBukkit extends GameGridInventory {
     ItemStack item = new ItemStack(Material.SIGN);
     ItemUtils.setName(item, "Info");
     ItemUtils.setLore(item, Arrays.asList(
+            "§7State: " + gameGrid.getState().name().toLowerCase(),
             "§7Time: " + ((timeDelta / 60000) % 60 ) + ":" + ((timeDelta / 1000) % 60 + "." + (timeDelta % 1000)),
             "§7Mines count: " + gameGrid.getMinesCount(),
-            "§7Watchers count: " + (inv.getViewers().size() - 1)
+            "§7Spectators: " + (inv.getViewers().size() - 1)
     ));
     inv.setItem(SLOT_INFO, item);
 

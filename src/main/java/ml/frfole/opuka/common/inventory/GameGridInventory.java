@@ -1,64 +1,30 @@
 package ml.frfole.opuka.common.inventory;
 
 import ml.frfole.opuka.common.gamegrid.GameGrid;
+import ml.frfole.opuka.common.gamegrid.GameGridRS;
 
 import java.util.UUID;
 
-public abstract class GameGridInventory {
-  protected GameGrid gameGrid;
-  protected UUID ownerId;
+public abstract class GameGridInventory extends InventoryBase {
+  public static final int SLOT_INFO = 4;
+  public static final int SLOT_RESET_START = 0;
+  static {
+    invName = "Opuka - Minesweeper";
+  }
 
+  protected GameGrid gameGrid;
   private boolean didEnded = false;
+
+  protected GameGridInventory(UUID ownerId, final int height, final int width, final int minesCount) {
+    super(ownerId);
+    this.gameGrid = new GameGridRS(height, width);
+    this.gameGrid.setInvalid(0, 0); // start / reset
+    this.gameGrid.setInvalid(4, 0); // time
+    this.gameGrid.populateWithMines(minesCount);
+  }
 
   public GameGrid getGameGrid() {
     return gameGrid;
-  }
-
-  public UUID getOwnerId() {
-    return ownerId;
-  }
-
-  /**
-   * Called when need to update inventory.
-   */
-  public abstract void update();
-
-  /**
-   * Called when need to destroy {@link GameGridInventory}.
-   */
-  public abstract void destroy();
-
-  /**
-   * Opens inventory to user with selected {@link UUID}.
-   * @param uuid the {@link UUID}
-   */
-  public abstract void open(UUID uuid);
-
-  public abstract Object getInventory();
-
-  /**
-   * Should be called every tick.
-   */
-  public void tick() {
-    update();
-  }
-
-  /**
-   * Perform right click on slot.
-   * <br/>
-   * Perform {@link GameGrid#flag} and optionally {@link GameGrid#timeStart()}.
-   * @param slot        the slot (left to right, up to down)
-   * @param width       the width (count of horizontal slots)
-   * @param performerId the {@link UUID} of performer, who clicked
-   */
-  public void rightClick(int slot, int width, UUID performerId) {
-    if (!isOwner(performerId)) return;
-    if (gameGrid.getState() == GameGrid.State.READY) {
-      gameGrid.timeStart();
-      didEnded = false;
-    }
-    gameGrid.flag(slot%width, slot/width);
-    update();
   }
 
   /**
@@ -84,11 +50,20 @@ public abstract class GameGridInventory {
   }
 
   /**
-   * Checks if {@link UUID} is same as {@link #ownerId}.
-   * @param id the {@link UUID}
-   * @return {@code true} if same, {@code false} otherwise
+   * Perform right click on slot.
+   * <br/>
+   * Perform {@link GameGrid#flag} and optionally {@link GameGrid#timeStart()}.
+   * @param slot        the slot (left to right, up to down)
+   * @param width       the width (count of horizontal slots)
+   * @param performerId the {@link UUID} of performer, who clicked
    */
-  public boolean isOwner(UUID id) {
-    return id.equals(ownerId);
+  public void rightClick(int slot, int width, UUID performerId) {
+    if (!isOwner(performerId)) return;
+    if (gameGrid.getState() == GameGrid.State.READY) {
+      gameGrid.timeStart();
+      didEnded = false;
+    }
+    gameGrid.flag(slot%width, slot/width);
+    update();
   }
 }
