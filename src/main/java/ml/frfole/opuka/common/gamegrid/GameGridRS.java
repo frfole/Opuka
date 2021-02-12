@@ -1,4 +1,4 @@
-package ml.frfole.opuka.common.gamegrids;
+package ml.frfole.opuka.common.gamegrid;
 
 import ml.frfole.opuka.common.Opuka;
 

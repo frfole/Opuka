@@ -1,7 +1,7 @@
 package ml.frfole.opuka.bukkit.commands;
 
-import ml.frfole.opuka.bukkit.GameGridInventoryBukkit;
-import ml.frfole.opuka.common.GameGridInventory;
+import ml.frfole.opuka.bukkit.inventory.GGInvBukkit;
+import ml.frfole.opuka.common.inventory.GameGridInventory;
 import ml.frfole.opuka.common.Opuka;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -20,12 +20,12 @@ public class OpukaCommand implements TabExecutor {
     if (sender instanceof Player) {
       final UUID performer = ((Player) sender).getUniqueId();
       if (args.length == 0) {
-        GameGridInventory ggi = new GameGridInventoryBukkit(54, performer, 8);
+        GameGridInventory ggi = new GGInvBukkit(54, performer, 8);
         Opuka.getInstance().methods.setPlayerGGI(performer, ggi);
       }
       if (args.length == 1) {
         if (args[0].equalsIgnoreCase("play") || args[0].equalsIgnoreCase("p")) {
-          GameGridInventory ggi = new GameGridInventoryBukkit(54, performer, 8);
+          GameGridInventory ggi = new GGInvBukkit(54, performer, 8);
           Opuka.getInstance().methods.setPlayerGGI(performer, ggi);
         }
       }
@@ -33,7 +33,7 @@ public class OpukaCommand implements TabExecutor {
         if (args[0].equalsIgnoreCase("play") || args[0].equalsIgnoreCase("p")) {
           if (isInt(args[1])) {
             final int mineCount = Integer.parseInt(args[1]);
-            GameGridInventory ggi = new GameGridInventoryBukkit(54, performer, mineCount);
+            GameGridInventory ggi = new GGInvBukkit(54, performer, mineCount);
             Opuka.getInstance().methods.setPlayerGGI(performer, ggi);
           }
         }

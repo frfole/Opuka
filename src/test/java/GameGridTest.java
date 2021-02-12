@@ -1,21 +1,19 @@
 import junit.framework.Assert;
-import ml.frfole.opuka.common.gamegrids.GameGrid;
-import ml.frfole.opuka.common.GameGridInventory;
+import ml.frfole.opuka.common.gamegrid.GameGrid;
 import ml.frfole.opuka.common.Opuka;
-import ml.frfole.opuka.common.OpukaMethods;
-import ml.frfole.opuka.common.gamegrids.GameGridRS;
-import ml.frfole.opuka.common.gamegrids.GameGridSS;
+import ml.frfole.opuka.common.gamegrid.GameGridSS;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Random;
-import java.util.UUID;
 
 public class GameGridTest {
 
   @Before
   public void before() {
-    new Opuka(new TestOpuka());
+    new Opuka(
+            new Opuka.Methods() {
+
+            }
+    );
   }
 
   @Test
@@ -77,8 +75,4 @@ public class GameGridTest {
       System.out.print("-");
     System.out.println();
   }
-
-  class TestOpuka extends OpukaMethods {
-  }
-
 }

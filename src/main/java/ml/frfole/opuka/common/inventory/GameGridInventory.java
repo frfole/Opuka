@@ -1,6 +1,6 @@
-package ml.frfole.opuka.common;
+package ml.frfole.opuka.common.inventory;
 
-import ml.frfole.opuka.common.gamegrids.GameGrid;
+import ml.frfole.opuka.common.gamegrid.GameGrid;
 
 import java.util.UUID;
 
@@ -9,6 +9,14 @@ public abstract class GameGridInventory {
   protected UUID ownerId;
 
   private boolean didEnded = false;
+
+  public GameGrid getGameGrid() {
+    return gameGrid;
+  }
+
+  public UUID getOwnerId() {
+    return ownerId;
+  }
 
   /**
    * Called when need to update inventory.
@@ -26,10 +34,12 @@ public abstract class GameGridInventory {
    */
   public abstract void open(UUID uuid);
 
+  public abstract Object getInventory();
+
   /**
    * Should be called every tick.
    */
-  protected void tick() {
+  public void tick() {
     update();
   }
 

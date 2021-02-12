@@ -1,4 +1,4 @@
-package ml.frfole.opuka.common.gamegrids;
+package ml.frfole.opuka.common.gamegrid;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -119,6 +119,7 @@ public abstract class GameGrid {
     } else if (type.isFlagged()) {
       grid[y][x] = type.flagged2Unknown();
     }
+    setState(State.PLAYING);
   }
 
   /**
