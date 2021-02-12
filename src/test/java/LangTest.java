@@ -32,7 +32,7 @@ public class LangTest {
     Assert.assertEquals(true, Opuka.getInstance().getLangManager().load());
     Assert.assertEquals("frfole", Opuka.getInstance().getLangManager().get("opuka.test.alfa"));
     Assert.assertEquals("RNG", Opuka.getInstance().getLangManager().get("game"));
-    Assert.assertEquals("Opuka is made by frfole.", Opuka.getInstance().getLangManager().get("opuka.placeholder.test", map));
+    Assert.assertEquals("Opuka §7is made by frfole.", Opuka.getInstance().getLangManager().get("opuka.placeholder.test", map));
     Assert.assertEquals("§4Unable to locate key §9not existing§4!", Opuka.getInstance().getLangManager().get("not existing"));
   }
 }

@@ -1,0 +1,20 @@
+{
+  "opuka.inventory.config.name": "Opuka - Minesweeper config",
+  "opuka.inventory.config.item.info.name": "§rInfo",
+  "opuka.inventory.config.item.info.lore": "§7Bukkit impl by §9frfole\n§7Core by §9frfole\n\n§6https://github.com/frfole/Opuka",
+  "opuka.inventory.config.item.play.name": "§2Play",
+  "opuka.inventory.config.item.play.lore": "§7Click to start the game\n§7with §9%mines% §7mine(s).",
+  "opuka.inventory.config.item.less_mines.name": "§cLess mines",
+  "opuka.inventory.config.item.less_mines.lore": "§7Click to remove 1 mine.\n§7min: 1",
+  "opuka.inventory.config.item.mines.name": "§rMines: §9%mines%",
+  "opuka.inventory.config.item.mines.lore": "§7Click to set mines count to 8.",
+  "opuka.inventory.config.item.more_mines.name": "§2More mines",
+  "opuka.inventory.config.item.more_mines.lore": "§7Click to add 1 mine.\n§7max: 52",
+  "opuka.inventory.gamegrid.name": "Opuka - Minesweeper game",
+  "opuka.inventory.gamegrid.item.info.name": "§rInfo",
+  "opuka.inventory.gamegrid.item.info.lore": "§7State: %state%\n§7time: %time%\n§7Spectators: %spec%\n§7Mines count: %mines%",
+  "opuka.inventory.gamegrid.item.start.name": "§2Start",
+  "opuka.inventory.gamegrid.item.start.lore": "§7Click to start.",
+  "opuka.inventory.gamegrid.item.reset.name": "§4Reset",
+  "opuka.inventory.gamegrid.item.reset.lore": "§7Click to reset."
+}

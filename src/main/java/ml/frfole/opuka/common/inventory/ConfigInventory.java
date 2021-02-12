@@ -1,5 +1,7 @@
 package ml.frfole.opuka.common.inventory;
 
+import ml.frfole.opuka.common.Opuka;
+
 import java.util.UUID;
 
 public abstract class ConfigInventory extends InventoryBase {
@@ -10,13 +12,11 @@ public abstract class ConfigInventory extends InventoryBase {
   public static final int SLOT_MINES_MORE = 15;
 
   protected int minesCount = 8;
-
-  static {
-    invName = "Opuka - Minesweeper config";
-  }
+  protected final String invName;
 
   protected ConfigInventory(UUID ownerId) {
     super(ownerId);
+    this.invName = Opuka.getInstance().getLangManager().get("opuka.inventory.config.name");
   }
 
   protected abstract void createGame(final int minesCount, final UUID performer);

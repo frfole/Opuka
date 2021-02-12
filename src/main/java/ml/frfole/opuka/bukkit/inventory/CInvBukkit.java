@@ -12,6 +12,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,28 +50,43 @@ public class CInvBukkit extends ConfigInventory {
   public void update() {
     // info item
     ItemStack item = new ItemStack(Material.SIGN);
-    ItemUtils.setName(item, "§rInfo");
-    ItemUtils.setLore(item, List.of("§7Bukkit impl by §9frfole", "§7Core by §9frfole", "", "§6https://github.com/frfole/Opuka"));
+    ItemUtils.setName(item, Opuka.getInstance().getLangManager().get("opuka.inventory.config.item.info.name")
+            .replaceAll("%mines%", String.valueOf(minesCount)));
+    ItemUtils.setLore(item, Arrays.asList(Opuka.getInstance().getLangManager().get("opuka.inventory.config.item.info.lore")
+            .replaceAll("%mines%", String.valueOf(minesCount))
+            .split("\n")));
     inv.setItem(SLOT_INFO, item);
     // play item
     item = new ItemStack(Material.LIME_CONCRETE_POWDER);
-    ItemUtils.setName(item, "§2Start the game");
-    ItemUtils.setLore(item, List.of("§7Click to start the game", "§7with §9" + minesCount + " §7mine(s)!"));
+    ItemUtils.setName(item, Opuka.getInstance().getLangManager().get("opuka.inventory.config.item.play.name")
+            .replaceAll("%mines%", String.valueOf(minesCount)));
+    ItemUtils.setLore(item, Arrays.asList(Opuka.getInstance().getLangManager().get("opuka.inventory.config.item.play.lore")
+                    .replaceAll("%mines%", String.valueOf(minesCount))
+                    .split("\n")));
     inv.setItem(SLOT_PLAY, item);
     // less mines
     item = new ItemStack(Material.REDSTONE,  minesCount - (minesCount <= 1 ? 0 : 1));
-    ItemUtils.setName(item, "§cLess mines");
-    ItemUtils.setLore(item, List.of("§7Click to remove 1 mine."));
+    ItemUtils.setName(item, Opuka.getInstance().getLangManager().get("opuka.inventory.config.item.less_mines.name")
+            .replaceAll("%mines%", String.valueOf(minesCount)));
+    ItemUtils.setLore(item, Arrays.asList(Opuka.getInstance().getLangManager().get("opuka.inventory.config.item.less_mines.lore")
+            .replaceAll("%mines%", String.valueOf(minesCount))
+            .split("\n")));
     inv.setItem(SLOT_MINES_LESS, item);
     // mines count
     item = new ItemStack(Material.TNT, minesCount);
-    ItemUtils.setName(item, "§rMines: §9" + minesCount);
-    ItemUtils.setLore(item, List.of("§7Click to reset mines count to 8", "", "§7min: 1, max: 52"));
+    ItemUtils.setName(item, Opuka.getInstance().getLangManager().get("opuka.inventory.config.item.mines.name")
+            .replaceAll("%mines%", String.valueOf(minesCount)));
+    ItemUtils.setLore(item, Arrays.asList(Opuka.getInstance().getLangManager().get("opuka.inventory.config.item.mines.lore")
+            .replaceAll("%mines%", String.valueOf(minesCount))
+            .split("\n")));
     inv.setItem(SLOT_MINES_CURRENT, item);
     // more mines
     item = new ItemStack(Material.LIME_CONCRETE, minesCount + (minesCount >= 52 ? 0 : 1));
-    ItemUtils.setName(item, "§2More mines");
-    ItemUtils.setLore(item, List.of("§7Click to add 1 mine."));
+    ItemUtils.setName(item, Opuka.getInstance().getLangManager().get("opuka.inventory.config.item.more_mines.name")
+            .replaceAll("%mines%", String.valueOf(minesCount)));
+    ItemUtils.setLore(item, Arrays.asList(Opuka.getInstance().getLangManager().get("opuka.inventory.config.item.more_mines.lore")
+            .replaceAll("%mines%", String.valueOf(minesCount))
+            .split("\n")));
     inv.setItem(SLOT_MINES_MORE, item);
   }
 

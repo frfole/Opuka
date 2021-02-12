@@ -16,6 +16,7 @@ public class Opuka {
     this.methods = methods;
     this.dataFolder = dataFolder;
     Opuka.instance = this;
+    langManager.load();
   }
 
   public static Opuka getInstance() {

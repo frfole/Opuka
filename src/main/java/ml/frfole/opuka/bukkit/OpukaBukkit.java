@@ -33,6 +33,7 @@ public class OpukaBukkit extends JavaPlugin {
   @Override
   public void onEnable() {
     super.onEnable();
+    this.saveResource("lang.json", false);
     new Opuka(new BukkitMethods(System.currentTimeMillis()), this.getDataFolder());
     Bukkit.getPluginCommand("opuka").setExecutor(this.opukaCommand);
     Bukkit.getPluginManager().registerEvents(this.inventoryListener, this);

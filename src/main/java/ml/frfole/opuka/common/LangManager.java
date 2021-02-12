@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public class LangManager {
   private final Map<String, String> stringMap = new HashMap<>();
 
   public boolean load() {
-    try (final JsonReader reader = new JsonReader(new FileReader(new File(Opuka.getInstance().getDataFolder(), "lang.json")))) {
+    try (final JsonReader reader = new JsonReader(new FileReader(new File(Opuka.getInstance().getDataFolder(), "lang.json"), StandardCharsets.UTF_8))) {
       stringMap.clear();
       stringMap.putAll(gson.fromJson(reader, LANG_MAP_TYPE));
       return true;
