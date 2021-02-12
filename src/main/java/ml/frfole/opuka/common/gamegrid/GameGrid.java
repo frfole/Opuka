@@ -436,11 +436,17 @@ public abstract class GameGrid {
    * Possible states of {@link GameGrid}.
    */
   public enum State {
-    READY,
-    PLAYING,
-    FINISHED_MINE,
-    FINISHED_WIN,
-    FINISHED_OTHER;
+    READY("ready"),
+    PLAYING("playing"),
+    FINISHED_MINE("lost"),
+    FINISHED_WIN("win"),
+    FINISHED_OTHER("win");
+
+    final String s;
+
+    State(String s) {
+      this.s = s;
+    }
 
     /**
      * Checks if {@link State} is finished state.
@@ -448,6 +454,10 @@ public abstract class GameGrid {
      */
     public boolean isFinished() {
       return this == FINISHED_MINE || this == FINISHED_WIN || this == FINISHED_OTHER;
+    }
+
+    public String getName() {
+      return s;
     }
   }
 }

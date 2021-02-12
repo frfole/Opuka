@@ -34,7 +34,7 @@ public class GGInvBukkit extends GameGridInventory {
     ItemStack item = new ItemStack(Material.SIGN);
     ItemUtils.setName(item, "Info");
     ItemUtils.setLore(item, Arrays.asList(
-            "§7State: " + gameGrid.getState().name().toLowerCase(),
+            "§7State: " + gameGrid.getState().getName(),
             "§7Time: " + ((timeDelta / 60000) % 60 ) + ":" + ((timeDelta / 1000) % 60 + "." + (timeDelta % 1000)),
             "§7Mines count: " + gameGrid.getMinesCount(),
             "§7Spectators: " + (inv.getViewers().size() - 1)

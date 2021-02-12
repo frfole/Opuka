@@ -5,6 +5,8 @@ import ml.frfole.opuka.common.gamegrid.GameGridSS;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+
 public class GameGridTest {
 
   @Before
@@ -12,8 +14,8 @@ public class GameGridTest {
     new Opuka(
             new Opuka.Methods() {
 
-            }
-    );
+            },
+            new File("src/test/resources"));
   }
 
   @Test

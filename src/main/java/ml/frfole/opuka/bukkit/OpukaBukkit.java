@@ -2,14 +2,12 @@ package ml.frfole.opuka.bukkit;
 
 import ml.frfole.opuka.bukkit.commands.OpukaCommand;
 import ml.frfole.opuka.bukkit.listeners.InventoryListener;
-import ml.frfole.opuka.common.inventory.GameGridInventory;
 import ml.frfole.opuka.common.Opuka;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Random;
-import java.util.UUID;
 
 public class OpukaBukkit extends JavaPlugin {
   private static OpukaBukkit instance;
@@ -35,7 +33,7 @@ public class OpukaBukkit extends JavaPlugin {
   @Override
   public void onEnable() {
     super.onEnable();
-    new Opuka(new BukkitMethods(System.currentTimeMillis()));
+    new Opuka(new BukkitMethods(System.currentTimeMillis()), this.getDataFolder());
     Bukkit.getPluginCommand("opuka").setExecutor(this.opukaCommand);
     Bukkit.getPluginManager().registerEvents(this.inventoryListener, this);
     this.taskTickN = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, Opuka.getInstance().methods::tick, 5, 5);

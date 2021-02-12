@@ -3,19 +3,31 @@ package ml.frfole.opuka.common;
 import ml.frfole.opuka.common.inventory.ConfigInventory;
 import ml.frfole.opuka.common.inventory.GameGridInventory;
 
+import java.io.File;
 import java.util.*;
 
 public class Opuka {
   public final Methods methods;
   private static Opuka instance;
+  private final File dataFolder;
+  private final LangManager langManager = new LangManager();
 
-  public Opuka(Methods methods) {
+  public Opuka(Methods methods, File dataFolder) {
     this.methods = methods;
+    this.dataFolder = dataFolder;
     Opuka.instance = this;
   }
 
   public static Opuka getInstance() {
     return Opuka.instance;
+  }
+
+  public File getDataFolder() {
+    return dataFolder;
+  }
+
+  public LangManager getLangManager() {
+    return langManager;
   }
 
   public abstract static class Methods {
