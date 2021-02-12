@@ -2,10 +2,7 @@ package ml.frfole.opuka.common;
 
 import ml.frfole.opuka.common.inventory.GameGridInventory;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class Opuka {
   public final Methods methods;
@@ -25,6 +22,9 @@ public class Opuka {
     protected final HashMap<UUID, GameGridInventory> uuid2GGI = new HashMap<>();
     protected final HashMap<UUID, UUID> spec2Owner = new HashMap<>();
 
+    /**
+     * Internal tick.
+     */
     public void tick() {
       for (Map.Entry<UUID, GameGridInventory> entry : uuid2GGI.entrySet()) {
         entry.getValue().tick();
@@ -39,11 +39,23 @@ public class Opuka {
       return this.random;
     }
 
+    /**
+     * Assigns player {@link GameGridInventory}.
+     * @param uuid the {@link UUID} of player
+     * @param ggi  the {@link GameGridInventory}
+     */
     public void setPlayerGGI(UUID uuid, GameGridInventory ggi) {
       this.removePlayerGGI(uuid);
       this.uuid2GGI.put(uuid, ggi);
     }
 
+    /**
+     * Sets player to spectate target.
+     * <br/>
+     * Works only, if player is not already playing.
+     * @param spectator the {@link UUID} of player(spectator)
+     * @param owner     the {@link UUID} of target
+     */
     public void setPlayerGGI(UUID spectator, UUID owner) {
       GameGridInventory ggi = uuid2GGI.get(owner);
       if (ggi != null && !ggi.isOwner(spectator)) {
@@ -52,6 +64,10 @@ public class Opuka {
       }
     }
 
+    /**
+     * Removes player from spectating other player or playing.
+     * @param uuid the {@link UUID} of player
+     */
     public void removePlayerGGI(UUID uuid) {
       GameGridInventory ggi = uuid2GGI.remove(uuid);
       spec2Owner.remove(uuid);
@@ -60,10 +76,28 @@ public class Opuka {
       }
     }
 
+    /**
+     * Gets {@link GameGridInventory} of player.
+     * @param uuid the {@link UUID} of player
+     * @return {@link GameGridInventory} of player, {@code null} if player is not playing
+     */
     public GameGridInventory getPlayerGGI(UUID uuid) {
       return uuid2GGI.get(uuid);
     }
 
+    /**
+     * Gets {@link Set<UUID>} of currently playing players as {@link UUID}.
+     * @return {@link Set} of {@link UUID} of currently playing players.
+     */
+    public Set<UUID> getPlayers() {
+      return uuid2GGI.keySet();
+    }
+
+    /**
+     * Checks if player is spectating.
+     * @param uuid the {@link UUID} of player
+     * @return {@code true} if player is spectating, {@code false} otherwise
+     */
     public boolean isSpectator(UUID uuid) {
       return spec2Owner.containsKey(uuid);
     }

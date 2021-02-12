@@ -1,7 +1,6 @@
 package ml.frfole.opuka.bukkit.inventory;
 
 import ml.frfole.opuka.bukkit.ItemUtils;
-import ml.frfole.opuka.bukkit.OpukaBukkit;
 import ml.frfole.opuka.common.gamegrid.GameGrid;
 import ml.frfole.opuka.common.inventory.GameGridInventory;
 import ml.frfole.opuka.common.gamegrid.GameGridRS;
@@ -47,25 +46,22 @@ public class GGInvBukkit extends GameGridInventory {
             "§7Mines count: " + gameGrid.getMinesCount(),
             "§7Watchers count: " + (inv.getViewers().size() - 1)
     ));
-    inv.setItem(4, item);
+    inv.setItem(SLOT_INFO, item);
 
     // (start | restart) item
     item = new ItemStack(gameGrid.getState() == GameGrid.State.READY ? Material.LIME_CONCRETE_POWDER : Material.RED_CONCRETE_POWDER);
     ItemUtils.setName(item, gameGrid.getState() == GameGrid.State.READY
             ? "§2Start"
             : "§4Reset");
-    inv.setItem(0, item);
+    inv.setItem(SLOT_RESET_START, item);
   }
 
   @Override
   public void destroy() {
     List<HumanEntity> viewers = new ArrayList<>(this.inv.getViewers());
     viewers.forEach(p -> {
-      try {
+      if (p != null)
         p.closeInventory();
-      } catch (ConcurrentModificationException | NullPointerException exception) {
-        exception.printStackTrace();
-      }
     });
   }
 
