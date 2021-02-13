@@ -49,7 +49,7 @@ public class CInvBukkit extends ConfigInventory {
   @Override
   public void update() {
     // info item
-    ItemStack item = new ItemStack(Material.SIGN);
+    ItemStack item = new ItemStack(Material.PAPER);
     ItemUtils.setName(item, Opuka.getInstance().getLangManager().get("opuka.inventory.config.item.info.name")
             .replaceAll("%mines%", String.valueOf(minesCount)));
     ItemUtils.setLore(item, Arrays.asList(Opuka.getInstance().getLangManager().get("opuka.inventory.config.item.info.lore")

@@ -33,7 +33,7 @@ public class GGInvBukkit extends GameGridInventory {
       }
     }
     // time item
-    ItemStack item = new ItemStack(Material.SIGN);
+    ItemStack item = new ItemStack(Material.PAPER);
     ItemUtils.setName(item, Opuka.getInstance().getLangManager().get("opuka.inventory.gamegrid.item.info.name")
             .replaceAll("%mines%", String.valueOf(gameGrid.getMinesCount())));
     ItemUtils.setLore(item, Arrays.asList(Opuka.getInstance().getLangManager().get("opuka.inventory.gamegrid.item.info.lore")
