@@ -1,0 +1,8 @@
+{
+  "entrypoint": "ml.frfole.opuka.minestom.OpukaMinestom",
+  "name": "Opuka",
+  "version": "${project.version}",
+  "authors": [
+    "frfole"
+  ]
+}

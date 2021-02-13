@@ -3,14 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <artifactId>Opuka</artifactId>
         <groupId>ml.frfole.opuka</groupId>
         <version>0.1.2.12</version>
     </parent>
 
-    <artifactId>Opuka-Bukkit</artifactId>
+    <artifactId>Opuka-Minestom</artifactId>
     <packaging>jar</packaging>
 
     <properties>
@@ -18,20 +17,33 @@
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
-
     <repositories>
         <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>minecraft.net</id>
+            <url>https://libraries.minecraft.net</url>
+        </repository>
+        <repository>
+            <id>spongepowered.org</id>
+            <url>https://repo.spongepowered.org/maven</url>
         </repository>
     </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.13.2-R0.1-SNAPSHOT</version>
+            <groupId>com.github.Minestom</groupId>
+            <artifactId>Minestom</artifactId>
+            <version>df2ee23a7c</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.shrinkwrap.resolver</groupId>
+                    <artifactId>shrinkwrap-resolver-depchain</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>ml.frfole.opuka</groupId>

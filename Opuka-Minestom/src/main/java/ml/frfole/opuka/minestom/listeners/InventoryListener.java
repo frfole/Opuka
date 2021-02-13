@@ -1,21 +1,20 @@
-package ml.frfole.opuka.bukkit.listeners;
+package ml.frfole.opuka.minestom.listeners;
 
-import ml.frfole.opuka.common.inventory.ConfigInventory;
-import ml.frfole.opuka.common.inventory.GameGridInventory;
 import ml.frfole.opuka.common.Opuka;
 import ml.frfole.opuka.common.gamegrid.GameGrid;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
+import ml.frfole.opuka.common.inventory.ConfigInventory;
+import ml.frfole.opuka.common.inventory.GameGridInventory;
+import net.minestom.server.event.Event;
+import net.minestom.server.event.inventory.InventoryClickEvent;
+import net.minestom.server.event.inventory.InventoryCloseEvent;
+import net.minestom.server.event.inventory.InventoryPreClickEvent;
+import net.minestom.server.inventory.click.ClickType;
 
 import java.util.UUID;
 
-public class InventoryListener implements Listener {
-
-  @EventHandler
-  public void onClick(final InventoryClickEvent event) {
-    final UUID performerId = event.getWhoClicked().getUniqueId();
+public class InventoryListener {
+  public static <E extends Event> void onClick(InventoryPreClickEvent event) {
+    final UUID performerId = event.getPlayer().getUuid();
     if (Opuka.getInstance().methods.isSpectator(performerId)) {
       event.setCancelled(true);
       return;
@@ -23,7 +22,7 @@ public class InventoryListener implements Listener {
     if (Opuka.getInstance().methods.isInConfig(performerId)) {
       event.setCancelled(true);
       final ConfigInventory ci = Opuka.getInstance().methods.getPlayerCI(performerId);
-      ci.rightClick(event.getRawSlot(), 9, performerId);
+      ci.rightClick(event.getSlot(), 9, performerId);
       return;
     }
     final GameGridInventory ggi = Opuka.getInstance().methods.getPlayerGGI(performerId);
@@ -31,15 +30,15 @@ public class InventoryListener implements Listener {
       return;
     }
     event.setCancelled(true);
-    final int slot = event.getRawSlot();
+    final int slot = event.getSlot();
     if (slot < 0 || slot > event.getInventory().getSize() - 1) return;
-    if (event.isLeftClick()) {
+    if (event.getClickType() == ClickType.LEFT_CLICK) {
       if (ggi.getGameGrid().getState() != GameGrid.State.READY && slot == GameGridInventory.SLOT_RESET_START) {
         ggi.getGameGrid().reset();
       } else {
         ggi.leftClick(slot, 9, performerId);
       }
-    } else if (event.isRightClick()) {
+    } else if (event.getClickType() == ClickType.RIGHT_CLICK) {
       if (ggi.getGameGrid().getState() != GameGrid.State.READY && slot == GameGridInventory.SLOT_RESET_START) {
         ggi.getGameGrid().reset();
       } else {
@@ -48,15 +47,13 @@ public class InventoryListener implements Listener {
     }
   }
 
-  @EventHandler
-  public void onClose(final InventoryCloseEvent event) {
-    final UUID performerId = event.getPlayer().getUniqueId();
+  public static <E extends Event> void onClose(InventoryCloseEvent e) {
+    final UUID performerId = e.getPlayer().getUuid();
     if (Opuka.getInstance().methods.isSpectator(performerId)) {
       Opuka.getInstance().methods.removePlayerGGI(performerId);
-      return;
     }
     final GameGridInventory ggi = Opuka.getInstance().methods.getPlayerGGI(performerId);
-    if (ggi == null || !event.getInventory().equals(ggi.getInventory())) return;
+    if (ggi == null || e.getInventory() == null || !e.getInventory().equals(ggi.getInventory())) return;
     Opuka.getInstance().methods.removePlayerGGI(performerId);
   }
 }

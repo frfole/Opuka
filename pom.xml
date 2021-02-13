@@ -7,10 +7,11 @@
     <groupId>ml.frfole.opuka</groupId>
     <artifactId>Opuka</artifactId>
     <packaging>pom</packaging>
-    <version>0.1</version>
+    <version>0.1.2.12</version>
 
     <modules>
         <module>Opuka-Bukkit</module>
+        <module>Opuka-Minestom</module>
         <module>Opuka-Common</module>
         <module>Opuka-Bundled</module>
     </modules>
