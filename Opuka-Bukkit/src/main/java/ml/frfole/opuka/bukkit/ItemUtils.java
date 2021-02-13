@@ -4,9 +4,10 @@ import ml.frfole.opuka.common.gamegrid.GameGrid;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
+
+import static ml.frfole.opuka.common.gamegrid.GameGrid.FieldType.*;
 
 /**
  * {@link ItemStack} utilities.
@@ -17,7 +18,7 @@ public class ItemUtils {
    * @param item the {@link ItemStack}
    * @param name the name
    */
-  public static void setName(@NotNull ItemStack item, @NotNull String name) {
+  public static void setName(ItemStack item, String name) {
     ItemMeta meta = item.getItemMeta();
     if (meta == null) return;
     meta.setDisplayName(name);
@@ -29,7 +30,7 @@ public class ItemUtils {
    * @param item the {@link ItemStack}
    * @param lore the lore
    */
-  public static void setLore(@NotNull ItemStack item, @NotNull List<String> lore) {
+  public static void setLore(ItemStack item, List<String> lore) {
     ItemMeta meta = item.getItemMeta();
     if (meta == null) return;
     meta.setLore(lore);
@@ -39,24 +40,24 @@ public class ItemUtils {
   public static ItemStack getItem(GameGrid.FieldType type, GameGrid.State state) {
     ItemStack item = new ItemStack(Material.STONE);
     if (type.isUnknown()) {
-      item = new ItemStack(state.isFinished() && type == GameGrid.FieldType.UNKNOWN_MINE
+      item = new ItemStack(state.isFinished() && type == UNKNOWN_MINE
               ? Material.RED_STAINED_GLASS_PANE
               : Material.LIME_STAINED_GLASS_PANE);
-      setName(item, state.isFinished() && type == GameGrid.FieldType.UNKNOWN_MINE ? "Mine" : "Unknown");
+      setName(item, state.isFinished() && type == UNKNOWN_MINE ? "Mine" : "Unknown");
       setLore(item,
               Arrays.asList("Right click to flag.", "Left click to dig."));
       return item;
     }
     else if (type.isFlagged()) {
-      item = new ItemStack(state.isFinished() && type == GameGrid.FieldType.UNKNOWN_FLAG_MINE
+      item = new ItemStack(state.isFinished() && type == UNKNOWN_FLAG_MINE
               ? Material.RED_STAINED_GLASS_PANE
               : Material.BLACK_STAINED_GLASS_PANE);
-      setName(item, state.isFinished() && type == GameGrid.FieldType.UNKNOWN_FLAG_MINE ? "Mine" : "Flag");
+      setName(item, state.isFinished() && type == UNKNOWN_FLAG_MINE ? "Mine" : "Flag");
       setLore(item, Arrays.asList("Right click to un-flag."));
       return item;
     }
     else if (type.isKnown()) {
-      if (type == GameGrid.FieldType.MINE)
+      if (type == MINE)
         return new ItemStack(Material.RED_STAINED_GLASS_PANE);
       int count = 0;
       switch (type) {

@@ -6,7 +6,9 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Opuka" />
+        <module name="Opuka-Bukkit" />
+        <module name="Opuka-Bundled" />
+        <module name="Opuka-Common" />
       </profile>
     </annotationProcessing>
   </component>
