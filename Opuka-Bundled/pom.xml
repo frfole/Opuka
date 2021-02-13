@@ -6,7 +6,7 @@
     <parent>
         <artifactId>Opuka</artifactId>
         <groupId>ml.frfole.opuka</groupId>
-        <version>0.1.2.12</version>
+        <version>0.1.2.14</version>
     </parent>
 
     <artifactId>Opuka-Bundled</artifactId>
