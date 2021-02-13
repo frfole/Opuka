@@ -20,5 +20,6 @@
   "opuka.command.opuka.usage.1": "§eUsage: §7/§6opuka §7(   §7| §bplay§7 | §bspectate§7 ) §8...",
   "opuka.command.opuka.usage.p": "§eUsage: §7/§6opuka §6play §7(   §7| §8{§binteger§8[§dmines§8]§8}§7 | §bconfig§7 )",
   "opuka.command.opuka.error.target_not_found": "§cPlayer with that name is not online!",
-  "opuka.command.opuka.error.for_players_only": "§cThis (sub)command can use only player!"
+  "opuka.command.opuka.error.for_players_only": "§cThis (sub)command can use only player!",
+  "opuka.command.opuka.error.no_perms": "§cYou do not have permission for this!"
 }

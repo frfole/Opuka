@@ -17,34 +17,38 @@ public class OpukaCommand extends OpukaCommandBase implements TabExecutor {
   @Override
   public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
     if (sender instanceof Player) {
-      final UUID performer = ((Player) sender).getUniqueId();
-      if (args.length == 0) {
-        play(performer, 54, 8);
-      } else if (args.length == 1) {
-        if (args[0].equalsIgnoreCase("play") || args[0].equalsIgnoreCase("p")) {
+      if (sender.hasPermission("opuka.command.opuka")) {
+        final UUID performer = ((Player) sender).getUniqueId();
+        if (args.length == 0) {
           play(performer, 54, 8);
+        } else if (args.length == 1) {
+          if (args[0].equalsIgnoreCase("play") || args[0].equalsIgnoreCase("p")) {
+            play(performer, 54, 8);
+          } else {
+            sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.usage.1").split("\n"));
+          }
         } else {
-          sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.usage.1").split("\n"));
+          if (args[0].equalsIgnoreCase("play") || args[0].equalsIgnoreCase("p")) {
+            if (isInt(args[1])) {
+              play(performer, 54, Integer.parseInt(args[1]));
+            } else if (args[1].equalsIgnoreCase("c") || args[1].equalsIgnoreCase("config")) {
+              config(performer);
+            } else {
+              sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.usage.p").split("\n"));
+            }
+          } else if (args[0].equalsIgnoreCase("spectate") || args[0].equalsIgnoreCase("s")) {
+            final Player targetP = Bukkit.getPlayer(args[1]);
+            if (targetP != null && targetP.isOnline()) {
+              spectate(performer, targetP.getUniqueId());
+            } else {
+              sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.error.target_not_found").split("\n"));
+            }
+          } else {
+            sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.usage.1").split("\n"));
+          }
         }
       } else {
-        if (args[0].equalsIgnoreCase("play") || args[0].equalsIgnoreCase("p")) {
-          if (isInt(args[1])) {
-            play(performer, 54, Integer.parseInt(args[1]));
-          } else if (args[1].equalsIgnoreCase("c") || args[1].equalsIgnoreCase("config")) {
-            config(performer);
-          } else {
-            sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.usage.p").split("\n"));
-          }
-        } else if (args[0].equalsIgnoreCase("spectate") || args[0].equalsIgnoreCase("s")) {
-          final Player targetP = Bukkit.getPlayer(args[1]);
-          if (targetP != null && targetP.isOnline()) {
-            spectate(performer, targetP.getUniqueId());
-          } else {
-            sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.error.target_not_found").split("\n"));
-          }
-        } else {
-          sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.usage.1").split("\n"));
-        }
+        sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.error.no_perms"));
       }
     } else {
       sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.error.for_players_only").split("\n"));

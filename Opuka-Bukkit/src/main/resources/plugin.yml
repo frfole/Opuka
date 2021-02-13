@@ -1,7 +1,20 @@
 main: "ml.frfole.opuka.bukkit.OpukaBukkit"
 name: "Opuka"
+prefix: "Opuka"
 version: "${project.version}"
-api-version: 1.13
+api-version: "1.13"
+author: "frfole"
+website: "https://github.com/frfole/Opuka"
+description: "Minesweeper game made in Minecraft"
 commands:
   opuka:
-    permission: default
+    aliases:
+      - minesweeper
+      - mines
+    description: "Main command for Opuka"
+    permission: "opuka.command.opuka"
+    usage: "opuka (play|spectate) ..."
+permissions:
+  opuka.command.opuka:
+    default: true
+    description: "Allows /opuka ..."
