@@ -4,11 +4,14 @@ import ml.frfole.opuka.common.Opuka;
 import ml.frfole.opuka.common.gamegrid.GameGrid;
 import ml.frfole.opuka.common.gamegrid.GameGridRS;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.UUID;
 
 public abstract class GameGridInventory extends InventoryBase {
   public static final int SLOT_INFO = 4;
   public static final int SLOT_RESET_START = 0;
+  public static final DateFormat dateFormatter = new SimpleDateFormat("mm:ss.SSS");
 
   protected final String invName;
   protected GameGrid gameGrid;

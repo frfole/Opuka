@@ -69,8 +69,7 @@ public class GGInvBukkit extends GameGridInventory {
   @Override
   public void update() {
     GameGrid.FieldType[][] grid = gameGrid.getGrid();
-    long timeDelta = (gameGrid.getState() != GameGrid.State.PLAYING ? gameGrid.getTimeEnd() : System.currentTimeMillis()) - gameGrid.getTimeStart();
-    final String timeDeltaS = ((timeDelta / 60000) % 60) + ":" + ((timeDelta / 1000) % 60 + "." + (timeDelta % 1000));
+    final String timeDeltaS = dateFormatter.format(new Date((gameGrid.getState() != GameGrid.State.PLAYING ? gameGrid.getTimeEnd() : System.currentTimeMillis()) - gameGrid.getTimeStart()));
     for (int y = 0; y < gameGrid.getHeight(); y++) {
       for (int x = 0; x < gameGrid.getWidth(); x++) {
         this.inv.setItem(y*9 + x, getItem(grid[y][x], gameGrid.getState()));

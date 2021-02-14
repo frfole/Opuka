@@ -10,10 +10,7 @@ import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static ml.frfole.opuka.common.gamegrid.GameGrid.FieldType.*;
 
@@ -46,12 +43,11 @@ public class GGInvMinestom extends GameGridInventory {
   @Override
   public void update() {
     GameGrid.FieldType[][] grid = gameGrid.getGrid();
-    long timeDelta = (gameGrid.getState() != GameGrid.State.PLAYING ? gameGrid.getTimeEnd() : System.currentTimeMillis()) - gameGrid.getTimeStart();
     Map<String, String> placeholders = new HashMap<>();
     placeholders.put("mines", String.valueOf(gameGrid.getMinesCount()));
     placeholders.put("spec", String.valueOf(inv.getViewers().size() - 1));
     placeholders.put("state", gameGrid.getState().getName());
-    placeholders.put("time", ((timeDelta / 60000) % 60) + ":" + ((timeDelta / 1000) % 60 + "." + (timeDelta % 1000)));
+    placeholders.put("time", dateFormatter.format(new Date((gameGrid.getState() != GameGrid.State.PLAYING ? gameGrid.getTimeEnd() : System.currentTimeMillis()) - gameGrid.getTimeStart())));
 
     for (int y = 0; y < gameGrid.getHeight(); y++) {
       for (int x = 0; x < gameGrid.getWidth(); x++) {
