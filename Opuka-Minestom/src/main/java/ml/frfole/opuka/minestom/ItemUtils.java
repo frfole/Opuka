@@ -6,11 +6,11 @@ import net.minestom.server.item.ItemStack;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ItemUtils {
   public static void setLore(ItemStack item, String path) {
-    ColoredText[] a = Arrays.stream(Opuka.getInstance().getLangManager().get(path).split("\n")).map(ColoredText::of).toArray(ColoredText[]::new);
-    item.setLore(Arrays.asList(a));
+    item.setLore(Arrays.stream(Opuka.getInstance().getLangManager().get(path).split("\n")).map(ColoredText::of).collect(Collectors.toList()));
   }
 
   public static void setName(ItemStack item, String path) {
@@ -18,8 +18,7 @@ public class ItemUtils {
   }
 
   public static void setLore(ItemStack item, String path, Map<String, String> placeholders) {
-    ColoredText[] a = Arrays.stream(Opuka.getInstance().getLangManager().get(path, placeholders).split("\n")).map(ColoredText::of).toArray(ColoredText[]::new);
-    item.setLore(Arrays.asList(a));
+    item.setLore(Arrays.stream(Opuka.getInstance().getLangManager().get(path, placeholders).split("\n")).map(ColoredText::of).collect(Collectors.toList()));
   }
 
   public static void setName(ItemStack item, String path, Map<String, String> placeholders) {
@@ -31,6 +30,6 @@ public class ItemUtils {
   }
 
   public static void setRLore(ItemStack item, String... lore) {
-    item.setLore(Arrays.asList(Arrays.stream(lore).map(ColoredText::of).toArray(ColoredText[]::new)));
+    item.setLore(Arrays.stream(lore).map(ColoredText::of).collect(Collectors.toList()));
   }
 }

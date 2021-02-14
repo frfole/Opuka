@@ -54,7 +54,7 @@ public class OpukaMinestom extends Extension {
     globalEventHandler.removeEventCallback(InventoryPreClickEvent.class, InventoryListener::onClick);
   }
 
-  public InputStream getResource(String fileName) {
+  public void getResource(String fileName) {
     final Path targetFile = dataFolder.toPath().resolve(fileName);
     try {
       // Copy from jar if the file does not exist in extension directory
@@ -62,10 +62,9 @@ public class OpukaMinestom extends Extension {
         savePackagedResource(fileName);
       }
 
-      return Files.newInputStream(targetFile);
+      Files.newInputStream(targetFile);
     } catch (IOException ex) {
       getLogger().debug("Failed to read resource {}.", fileName, ex);
-      return null;
     }
   }
 
@@ -94,22 +93,19 @@ public class OpukaMinestom extends Extension {
    * Copies a resource file to the extension directory, replacing any existing copy.
    *
    * @param fileName The resource to save
-   * @return True if the resource was saved successfully, null otherwise
    */
-  public boolean savePackagedResource(String fileName) {
+  public void savePackagedResource(String fileName) {
     final Path targetFile = dataFolder.toPath().resolve(fileName);
     try (InputStream is = getPackagedResource(fileName)) {
       Files.createDirectories(targetFile.getParent());
 
       if (is == null) {
-        return false;
+        return;
       }
 
       Files.copy(is, targetFile, StandardCopyOption.REPLACE_EXISTING);
-      return true;
     } catch (IOException ex) {
       getLogger().info("Failed to save resource {}.", fileName, ex);
-      return false;
     }
   }
 

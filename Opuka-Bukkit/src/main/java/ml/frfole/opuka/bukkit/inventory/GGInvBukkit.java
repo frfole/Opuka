@@ -1,7 +1,6 @@
 package ml.frfole.opuka.bukkit.inventory;
 
 import ml.frfole.opuka.bukkit.ItemUtils;
-import ml.frfole.opuka.common.Opuka;
 import ml.frfole.opuka.common.gamegrid.GameGrid;
 import ml.frfole.opuka.common.inventory.GameGridInventory;
 import org.bukkit.Bukkit;
@@ -30,8 +29,8 @@ public class GGInvBukkit extends GameGridInventory {
       item = new ItemStack(state.isFinished() && type == UNKNOWN_MINE
               ? Material.RED_STAINED_GLASS_PANE
               : Material.LIME_STAINED_GLASS_PANE);
-      ItemUtils.setName(item, state.isFinished() && type == UNKNOWN_MINE ? "Mine" : "Unknown");
-      ItemUtils.setLore(item,
+      ItemUtils.setRName(item, state.isFinished() && type == UNKNOWN_MINE ? "Mine" : "Unknown");
+      ItemUtils.setRLore(item,
               Arrays.asList("Right click to flag.", "Left click to dig."));
       return item;
     }
@@ -39,8 +38,8 @@ public class GGInvBukkit extends GameGridInventory {
       item = new ItemStack(state.isFinished() && type == UNKNOWN_FLAG_MINE
               ? Material.RED_STAINED_GLASS_PANE
               : Material.BLACK_STAINED_GLASS_PANE);
-      ItemUtils.setName(item, state.isFinished() && type == UNKNOWN_FLAG_MINE ? "Mine" : "Flag");
-      ItemUtils.setLore(item, Arrays.asList("Right click to un-flag."));
+      ItemUtils.setRName(item, state.isFinished() && type == UNKNOWN_FLAG_MINE ? "Mine" : "Flag");
+      ItemUtils.setRLore(item, Arrays.asList("Right click to un-flag."));
       return item;
     }
     else if (type.isKnown()) {
@@ -59,8 +58,8 @@ public class GGInvBukkit extends GameGridInventory {
         default: break;
       }
       item = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE, count);
-      ItemUtils.setName(item, count + " mine(s) nearby");
-      ItemUtils.setLore(item, Arrays.asList("There is nearby " + count + " mine(s)"));
+      ItemUtils.setRName(item, count + " mine(s) nearby");
+      ItemUtils.setRLore(item, Arrays.asList("There is nearby " + count + " mine(s)"));
       return item;
     }
     return item;
@@ -68,8 +67,13 @@ public class GGInvBukkit extends GameGridInventory {
 
   @Override
   public void update() {
-    GameGrid.FieldType[][] grid = gameGrid.getGrid();
-    final String timeDeltaS = dateFormatter.format(new Date((gameGrid.getState() != GameGrid.State.PLAYING ? gameGrid.getTimeEnd() : System.currentTimeMillis()) - gameGrid.getTimeStart()));
+    final GameGrid.FieldType[][] grid = gameGrid.getGrid();
+    final Map<String, String> placeholders = new HashMap<>();
+    placeholders.put("mines", String.valueOf(gameGrid.getMinesCount()));
+    placeholders.put("spec", String.valueOf(inv.getViewers().size() - 1));
+    placeholders.put("state", gameGrid.getState().getName());
+    placeholders.put("time", dateFormatter.format(new Date((gameGrid.getState() != GameGrid.State.PLAYING ? gameGrid.getTimeEnd() : System.currentTimeMillis()) - gameGrid.getTimeStart())));
+
     for (int y = 0; y < gameGrid.getHeight(); y++) {
       for (int x = 0; x < gameGrid.getWidth(); x++) {
         this.inv.setItem(y*9 + x, getItem(grid[y][x], gameGrid.getState()));
@@ -77,36 +81,24 @@ public class GGInvBukkit extends GameGridInventory {
     }
     // time item
     ItemStack item = new ItemStack(Material.PAPER);
-    ItemUtils.setName(item, Opuka.getInstance().getLangManager().get("opuka.inventory.gamegrid.item.info.name")
-            .replaceAll("%mines%", String.valueOf(gameGrid.getMinesCount())));
-    ItemUtils.setLore(item, Arrays.asList(Opuka.getInstance().getLangManager().get("opuka.inventory.gamegrid.item.info.lore")
-            .replaceAll("%mines%", String.valueOf(gameGrid.getMinesCount()))
-            .replaceAll("%time%", timeDeltaS)
-            .replaceAll("%spec%", String.valueOf(inv.getViewers().size() - 1))
-            .replaceAll("%state%", gameGrid.getState().getName())
-            .split("\n")));
+    ItemUtils.setName(item, "opuka.inventory.gamegrid.item.info.name", placeholders);
+    ItemUtils.setLore(item, "opuka.inventory.gamegrid.item.info.lore", placeholders);
     inv.setItem(SLOT_INFO, item);
 
     // (start | restart) item
     item = new ItemStack(gameGrid.getState() == GameGrid.State.READY ? Material.LIME_CONCRETE_POWDER : Material.RED_CONCRETE_POWDER);
-    ItemUtils.setName(item, Opuka.getInstance().getLangManager().get("opuka.inventory.gamegrid.item."
+    ItemUtils.setName(item, "opuka.inventory.gamegrid.item."
             + (gameGrid.getState() == GameGrid.State.READY ? "start" : "reset")
-            + ".name")
-            .replaceAll("%mines%", String.valueOf(gameGrid.getMinesCount())));
-    ItemUtils.setLore(item, Arrays.asList(Opuka.getInstance().getLangManager().get("opuka.inventory.gamegrid.item."
+            + ".name", placeholders);
+    ItemUtils.setLore(item, "opuka.inventory.gamegrid.item."
             + (gameGrid.getState() == GameGrid.State.READY ? "start" : "reset")
-            + ".lore")
-            .replaceAll("%mines%", String.valueOf(gameGrid.getMinesCount()))
-            .replaceAll("%time%", timeDeltaS)
-            .replaceAll("%spec%", String.valueOf(inv.getViewers().size() - 1))
-            .replaceAll("%state%", gameGrid.getState().getName())
-            .split("\n").clone()));
+            + ".lore", placeholders);
     inv.setItem(SLOT_RESET_START, item);
   }
 
   @Override
   public void destroy() {
-    List<HumanEntity> viewers = new ArrayList<>(this.inv.getViewers());
+    final List<HumanEntity> viewers = new ArrayList<>(this.inv.getViewers());
     viewers.forEach(p -> {
       if (p != null)
         p.closeInventory();

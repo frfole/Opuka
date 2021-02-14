@@ -25,7 +25,7 @@ public class GGInvMinestom extends GameGridInventory {
 
   @Override
   public void destroy() {
-    Set<Player> players = inv.getViewers();
+    final Set<Player> players = inv.getViewers();
     players.forEach(player -> {
       if (player != null)
         player.closeInventory();
@@ -42,8 +42,8 @@ public class GGInvMinestom extends GameGridInventory {
 
   @Override
   public void update() {
-    GameGrid.FieldType[][] grid = gameGrid.getGrid();
-    Map<String, String> placeholders = new HashMap<>();
+    final GameGrid.FieldType[][] grid = gameGrid.getGrid();
+    final Map<String, String> placeholders = new HashMap<>();
     placeholders.put("mines", String.valueOf(gameGrid.getMinesCount()));
     placeholders.put("spec", String.valueOf(inv.getViewers().size() - 1));
     placeholders.put("state", gameGrid.getState().getName());

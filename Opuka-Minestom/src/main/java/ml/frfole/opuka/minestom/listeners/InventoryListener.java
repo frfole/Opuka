@@ -5,7 +5,6 @@ import ml.frfole.opuka.common.gamegrid.GameGrid;
 import ml.frfole.opuka.common.inventory.ConfigInventory;
 import ml.frfole.opuka.common.inventory.GameGridInventory;
 import net.minestom.server.event.Event;
-import net.minestom.server.event.inventory.InventoryClickEvent;
 import net.minestom.server.event.inventory.InventoryCloseEvent;
 import net.minestom.server.event.inventory.InventoryPreClickEvent;
 import net.minestom.server.inventory.click.ClickType;
@@ -13,7 +12,7 @@ import net.minestom.server.inventory.click.ClickType;
 import java.util.UUID;
 
 public class InventoryListener {
-  public static <E extends Event> void onClick(InventoryPreClickEvent event) {
+  public static void onClick(InventoryPreClickEvent event) {
     final UUID performerId = event.getPlayer().getUuid();
     if (Opuka.getInstance().methods.isSpectator(performerId)) {
       event.setCancelled(true);
@@ -26,9 +25,7 @@ public class InventoryListener {
       return;
     }
     final GameGridInventory ggi = Opuka.getInstance().methods.getPlayerGGI(performerId);
-    if (ggi == null || !event.getInventory().equals(ggi.getInventory())) {
-      return;
-    }
+    if (ggi == null || !event.getInventory().equals(ggi.getInventory())) return;
     event.setCancelled(true);
     final int slot = event.getSlot();
     if (slot < 0 || slot > event.getInventory().getSize() - 1) return;
@@ -47,7 +44,7 @@ public class InventoryListener {
     }
   }
 
-  public static <E extends Event> void onClose(InventoryCloseEvent e) {
+  public static void onClose(InventoryCloseEvent e) {
     final UUID performerId = e.getPlayer().getUuid();
     if (Opuka.getInstance().methods.isSpectator(performerId)) {
       Opuka.getInstance().methods.removePlayerGGI(performerId);

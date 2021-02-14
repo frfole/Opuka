@@ -1,7 +1,7 @@
 {
   "opuka.inventory.config.name": "§7[§cOpuka§7] §4Minesweeper §8config",
   "opuka.inventory.config.item.info.name": "§bInfo",
-  "opuka.inventory.config.item.info.lore": "§7Bukkit and Minestom impl by §9frfole\n§7Core by §9frfole\n\n§6https://github.com/frfole/Opuka",
+  "opuka.inventory.config.item.info.lore": "§7%implname% impl by §9%implauthor%\n§7Core by §9frfole\n\n§6https://github.com/frfole/Opuka",
   "opuka.inventory.config.item.play.name": "§2Play",
   "opuka.inventory.config.item.play.lore": "§7Click to start the game\n§7with §9%mines% §7mine(s).",
   "opuka.inventory.config.item.less_mines.name": "§cLess mines",

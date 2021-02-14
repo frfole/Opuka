@@ -18,11 +18,11 @@ import java.util.UUID;
 public class OpukaCommand extends Command {
   OpukaCommandImpl base = new OpukaCommandImpl();
 
-  ArgumentWord actionPlay = ArgumentType.Word("action-p").from("play", "p");
-  ArgumentWord actionPlayConfig = ArgumentType.Word("action-p-c").from("config", "c");
-  ArgumentNumber<Integer> actionPlayInt = ArgumentType.Integer("action-p-i").between(0, 52);
-  ArgumentWord actionSpec = ArgumentType.Word("action-s").from("spectate", "s");
-  ArgumentWord actionSpecName = ArgumentType.Word("action-s-n");
+  final protected ArgumentWord actionPlay = ArgumentType.Word("action-p").from("play", "p");
+  final protected ArgumentWord actionPlayConfig = ArgumentType.Word("action-p-c").from("config", "c");
+  final protected ArgumentNumber<Integer> actionPlayInt = ArgumentType.Integer("action-p-i").between(0, 52);
+  final protected ArgumentWord actionSpec = ArgumentType.Word("action-s").from("spectate", "s");
+  protected ArgumentWord actionSpecName = ArgumentType.Word("action-s-n");
 
   public OpukaCommand() {
     super("opuka", "minesweeper", "mines");
@@ -70,7 +70,7 @@ public class OpukaCommand extends Command {
     @Override
     protected String[] getPlayingNames() {
       final Set<UUID> uuidSet = Opuka.getInstance().methods.getPlayers();
-      Set<String> names = new HashSet<>();
+      final Set<String> names = new HashSet<>();
       for (UUID uuid : uuidSet) {
         final Player p = MinecraftServer.getConnectionManager().getPlayer(uuid);
         if (p != null && p.isOnline())

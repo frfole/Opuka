@@ -49,7 +49,7 @@ public class OpukaCommand implements TabExecutor {
           }
         }
       } else {
-        sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.error.no_perms"));
+        sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.error.no_perms").split("\n"));
       }
     } else {
       sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.error.for_players_only").split("\n"));
@@ -86,7 +86,7 @@ public class OpukaCommand implements TabExecutor {
     @Override
     protected String[] getPlayingNames() {
       final Set<UUID> uuidSet = Opuka.getInstance().methods.getPlayers();
-      Set<String> names = new HashSet<>();
+      final Set<String> names = new HashSet<>();
       for (UUID uuid : uuidSet) {
         final OfflinePlayer p = Bukkit.getOfflinePlayer(uuid);
         if (p.isOnline())
