@@ -1,5 +1,6 @@
 package ml.frfole.opuka.common;
 
+import ml.frfole.opuka.common.gamegrid.GameGrid;
 import ml.frfole.opuka.common.inventory.ConfigInventory;
 import ml.frfole.opuka.common.inventory.GameGridInventory;
 
@@ -63,6 +64,13 @@ public class Opuka {
      * @return {@link GameGridInventory}
      */
     public abstract GameGridInventory createGGI(UUID owner, int minesCount);
+
+    /**
+     * Called every time game finish.
+     * @param gameGrid the {@link GameGrid}
+     * @param owner    the {@link UUID} of player
+     */
+    public abstract void callEventGameFinish(GameGrid gameGrid, UUID owner);
 
     /**
      * Called when should be shutdown.

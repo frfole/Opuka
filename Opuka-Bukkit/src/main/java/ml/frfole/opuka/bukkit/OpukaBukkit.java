@@ -1,10 +1,12 @@
 package ml.frfole.opuka.bukkit;
 
 import ml.frfole.opuka.bukkit.commands.OpukaCommand;
+import ml.frfole.opuka.bukkit.events.GameFinishEvent;
 import ml.frfole.opuka.bukkit.inventory.CInvBukkit;
 import ml.frfole.opuka.bukkit.inventory.GGInvBukkit;
 import ml.frfole.opuka.bukkit.listeners.InventoryListener;
 import ml.frfole.opuka.common.Opuka;
+import ml.frfole.opuka.common.gamegrid.GameGrid;
 import ml.frfole.opuka.common.inventory.ConfigInventory;
 import ml.frfole.opuka.common.inventory.GameGridInventory;
 import org.bukkit.Bukkit;
@@ -65,6 +67,11 @@ public class OpukaBukkit extends JavaPlugin {
     @Override
     public GameGridInventory createGGI(UUID owner, int minesCount) {
       return new GGInvBukkit(owner, minesCount);
+    }
+
+    @Override
+    public void callEventGameFinish(GameGrid gameGrid, UUID owner) {
+      Bukkit.getPluginManager().callEvent(new GameFinishEvent(gameGrid, owner));
     }
 
     @Override

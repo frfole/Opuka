@@ -47,6 +47,7 @@ public abstract class GameGridInventory extends InventoryBase {
     gameGrid.dig(slot%width, slot/width);
     if (gameGrid.getState().isFinished() && !didEnded) {
       gameGrid.timeEnd();
+      Opuka.getInstance().methods.callEventGameFinish(gameGrid, ownerId);
       didEnded = true;
     }
     update();

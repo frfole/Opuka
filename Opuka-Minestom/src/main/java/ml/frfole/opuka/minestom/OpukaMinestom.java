@@ -1,15 +1,16 @@
 package ml.frfole.opuka.minestom;
 
 import ml.frfole.opuka.common.Opuka;
+import ml.frfole.opuka.common.gamegrid.GameGrid;
 import ml.frfole.opuka.common.inventory.ConfigInventory;
 import ml.frfole.opuka.common.inventory.GameGridInventory;
 import ml.frfole.opuka.minestom.commands.OpukaCommand;
+import ml.frfole.opuka.minestom.events.GameFinishEvent;
 import ml.frfole.opuka.minestom.inventory.CInvMinestom;
 import ml.frfole.opuka.minestom.inventory.GGInvMinestom;
 import ml.frfole.opuka.minestom.listeners.InventoryListener;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.event.GlobalEventHandler;
-import net.minestom.server.event.inventory.InventoryClickEvent;
 import net.minestom.server.event.inventory.InventoryCloseEvent;
 import net.minestom.server.event.inventory.InventoryPreClickEvent;
 import net.minestom.server.extensions.Extension;
@@ -18,13 +19,11 @@ import net.minestom.server.utils.time.TimeUnit;
 
 import java.io.*;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Random;
 import java.util.UUID;
-import java.util.logging.Level;
 
 public class OpukaMinestom extends Extension {
   private static OpukaMinestom instance;
@@ -131,6 +130,11 @@ public class OpukaMinestom extends Extension {
     @Override
     public GameGridInventory createGGI(UUID owner, int minesCount) {
       return new GGInvMinestom(owner, minesCount);
+    }
+
+    @Override
+    public void callEventGameFinish(GameGrid gameGrid, UUID owner) {
+      MinecraftServer.getGlobalEventHandler().callEvent(GameFinishEvent.class, new GameFinishEvent(gameGrid, owner));
     }
 
     @Override
