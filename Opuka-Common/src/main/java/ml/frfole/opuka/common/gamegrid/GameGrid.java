@@ -13,7 +13,6 @@ public abstract class GameGrid {
   private int invalidCount = 0;
   private int minesCount = 0;
   private State state = State.FINISHED_OTHER;
-  private State prevState = state;
   private long timeStart = -1;
   private long timeEnd = -1;
 
@@ -201,19 +200,10 @@ public abstract class GameGrid {
   }
 
   /**
-   * Gets previous {@link State} of this {@link GameGrid}.
-   * @return previous {@link State}
-   */
-  public State getPrevState() {
-    return prevState;
-  }
-
-  /**
-   * Sets current {@link #state} and sets {@link #prevState}.
+   * Sets current {@link #state}.
    * @param newState the new {@link State}
    */
   protected void setState(State newState) {
-    this.prevState = this.state;
     this.state = newState;
   }
 

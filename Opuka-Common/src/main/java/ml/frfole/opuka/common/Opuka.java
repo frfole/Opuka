@@ -19,14 +19,26 @@ public class Opuka {
     langManager.load();
   }
 
+  /**
+   * Gets instance of {@link Opuka}.
+   * @return instance of {@link Opuka}
+   */
   public static Opuka getInstance() {
     return Opuka.instance;
   }
 
+  /**
+   * Gets data folder.
+   * @return data folder.
+   */
   public File getDataFolder() {
     return dataFolder;
   }
 
+  /**
+   * Gets {@link LangManager} instance.
+   * @return {@link LangManager} instance.
+   */
   public LangManager getLangManager() {
     return langManager;
   }
@@ -36,6 +48,29 @@ public class Opuka {
     protected final HashMap<UUID, GameGridInventory> uuid2GGI = new HashMap<>();
     protected final HashMap<UUID, UUID> spec2Owner = new HashMap<>();
     protected final HashMap<UUID, ConfigInventory> uuid2CI = new HashMap<>();
+
+    /**
+     * Creates {@link ConfigInventory}.
+     * @param owner the {@link UUID} of owner
+     * @return new {@link ConfigInventory}
+     */
+    public abstract ConfigInventory createCI(UUID owner);
+
+    /**
+     * Creates {@link GameGridInventory}.
+     * @param owner      the {@link UUID} of owner
+     * @param minesCount the amount of mines
+     * @return {@link GameGridInventory}
+     */
+    public abstract GameGridInventory createGGI(UUID owner, int minesCount);
+
+    /**
+     * Called when should be shutdown.
+     */
+    public void shutdown() {
+      uuid2CI.keySet().forEach(this::removePlayerCI);
+      uuid2GGI.keySet().forEach(this::removePlayerGGI);
+    }
 
     /**
      * Internal tick.

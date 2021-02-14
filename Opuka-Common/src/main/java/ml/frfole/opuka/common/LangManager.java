@@ -19,6 +19,10 @@ public class LangManager {
   private final Gson gson = new Gson();
   private final Map<String, String> stringMap = new HashMap<>();
 
+  /**
+   * Loads lang.json to memory.
+   * @return {@code true} if successfully, {@code false} otherwise
+   */
   public boolean load() {
     try (final JsonReader reader = new JsonReader(new FileReader(new File(Opuka.getInstance().getDataFolder(), "lang.json"), StandardCharsets.UTF_8))) {
       stringMap.clear();
@@ -29,11 +33,22 @@ public class LangManager {
     }
   }
 
+  /**
+   * Gets value of key in {@link #stringMap}.
+   * @param key the key
+   * @return the value of key in {@link #stringMap}
+   */
   public String get(final String key) {
     final String s = stringMap.get(key);
     return s == null ? MSG_KEY_NOT_FOUND.replaceAll("%key%", key) : s;
   }
 
+  /**
+   * Gets value of key in {@link #stringMap} and replace placeholders.
+   * @param key          the key
+   * @param placeholders the placeholders
+   * @return value of key in {@link #stringMap} and replace placeholders
+   */
   public String get(String key, final Map<String, String> placeholders) {
     String s = get(key);
     for (final Map.Entry<String, String> p : placeholders.entrySet()) {

@@ -3,7 +3,6 @@ package ml.frfole.opuka.bukkit.inventory;
 import ml.frfole.opuka.bukkit.ItemUtils;
 import ml.frfole.opuka.common.Opuka;
 import ml.frfole.opuka.common.inventory.ConfigInventory;
-import ml.frfole.opuka.common.inventory.GameGridInventory;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -23,12 +22,6 @@ public class CInvBukkit extends ConfigInventory {
     super(ownerId);
     this.inv = Bukkit.createInventory(null, 18, invName);
     this.open(ownerId);
-  }
-
-  @Override
-  protected void createGame(int minesCount, UUID performer) {
-    final GameGridInventory ggi = new GGInvBukkit(54, performer, minesCount);
-    Opuka.getInstance().methods.setPlayerGGI(performer, ggi);
   }
 
   @Override

@@ -42,6 +42,11 @@ public abstract class InventoryBase {
    * Called when need to update inventory.
    */
   public abstract void update();
+
+  /**
+   * Gets inventory.
+   * @return the inventory
+   */
   public abstract Object getInventory();
 
   /**

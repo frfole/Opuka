@@ -2,9 +2,9 @@ package ml.frfole.opuka.minestom.commands;
 
 import ml.frfole.opuka.common.Opuka;
 import ml.frfole.opuka.common.commands.OpukaCommandBase;
-import ml.frfole.opuka.minestom.inventory.CInvMinestom;
-import ml.frfole.opuka.minestom.inventory.GGInvMinestom;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.command.CommandSender;
+import net.minestom.server.command.builder.Arguments;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.command.builder.arguments.ArgumentWord;
@@ -25,73 +25,46 @@ public class OpukaCommand extends Command {
   ArgumentWord actionSpecName = ArgumentType.Word("action-s-n");
 
   public OpukaCommand() {
-    super("opuka");
+    super("opuka", "minesweeper", "mines");
 
-    setDefaultExecutor((sender, args) -> {
-      if (sender.isPlayer()) {
-        base.play(sender.asPlayer().getUuid(), 54, 8);
-      } else {
-        sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.error.for_players_only").split("\n"));
-      }
-    });
+    setDefaultExecutor((sender, args) -> base.play(sender.asPlayer().getUuid(), 8));
+    setCondition(this::playerOnly);
 
-    addSyntax((sender, args) -> {
-      if (sender.isPlayer()) {
-        base.play(sender.asPlayer().getUuid(), 54, 8);
-      } else {
-        sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.error.for_players_only").split("\n"));
-      }
-    }, actionPlay);
+    // (p|play)
+    addSyntax(this::playerOnly, (sender, args) -> base.play(sender.asPlayer().getUuid(), 8),
+            actionPlay);
+    // (p|play) (c|config)
+    addSyntax(this::playerOnly, (sender, args) -> base.config(sender.asPlayer().getUuid()),
+            actionPlay, actionPlayConfig);
+    // (p|play) <minesCount>
+    addSyntax(this::playerOnly, (sender, args) -> base.play(sender.asPlayer().getUuid(), args.get(actionPlayInt)),
+            actionPlay, actionPlayInt);
+    // (s|spectate) <target>
+    addSyntax(this::playerOnly, this::spectate,
+            actionSpec, actionSpecName);
+  }
 
-    addSyntax((sender, args) -> {
-      if (sender.isPlayer()) {
-        base.config(sender.asPlayer().getUuid());
-      } else {
-        sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.error.for_players_only").split("\n"));
-      }
-    }, actionPlay, actionPlayConfig);
-    addSyntax((sender, args) -> {
-      if (sender.isPlayer()) {
-        base.play(sender.asPlayer().getUuid(), 54, args.get(actionPlayInt));
-      } else {
-        sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.error.for_players_only").split("\n"));
-      }
-    }, actionPlay, actionPlayInt);
+  private void spectate(CommandSender sender, Arguments args) {
+    final Player targetP = MinecraftServer.getConnectionManager().getPlayer(args.get(actionSpecName));
+    if (targetP != null && targetP.isOnline()) {
+      base.spectate(sender.asPlayer().getUuid(), targetP.getUuid());
+    } else {
+      sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.error.target_not_found").split("\n"));
+    }
+  }
 
-    addSyntax((sender, args) -> {
-      final Player targetP = MinecraftServer.getConnectionManager().findPlayer(args.get(actionSpecName));
-      if (sender.isPlayer()) {
-        if (targetP != null && targetP.isOnline()) {
-          base.spectate(sender.asPlayer().getUuid(), targetP.getUuid());
-        } else {
-          sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.error.target_not_found").split("\n"));
-        }
-      } else {
-        sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.error.for_players_only").split("\n"));
-      }
-    }, actionSpec, actionSpecName);
-
+  private boolean playerOnly(CommandSender source, String command) {
+    return source.isPlayer();
   }
 
   public void update() {
     actionSpecName = actionSpecName.from(base.getPlayingNames());
   }
 
-  private class OpukaCommandImpl extends OpukaCommandBase {
-
+  private static class OpukaCommandImpl extends OpukaCommandBase {
     @Override
-    public void config(UUID performer) {
-      Opuka.getInstance().methods.setPlayerCI(performer, new CInvMinestom(performer));
-    }
-
-    @Override
-    public void play(UUID performer, int size, int minesCount) {
-      Opuka.getInstance().methods.setPlayerGGI(performer, new GGInvMinestom(size, performer, minesCount));
-    }
-
-    @Override
-    public void spectate(UUID id, UUID targetId) {
-      super.spectate(id, targetId);
+    public void spectate(UUID performer, UUID target) {
+      super.spectate(performer, target);
     }
 
     @Override

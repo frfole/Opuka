@@ -1,7 +1,11 @@
 package ml.frfole.opuka.minestom;
 
 import ml.frfole.opuka.common.Opuka;
+import ml.frfole.opuka.common.inventory.ConfigInventory;
+import ml.frfole.opuka.common.inventory.GameGridInventory;
 import ml.frfole.opuka.minestom.commands.OpukaCommand;
+import ml.frfole.opuka.minestom.inventory.CInvMinestom;
+import ml.frfole.opuka.minestom.inventory.GGInvMinestom;
 import ml.frfole.opuka.minestom.listeners.InventoryListener;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.event.GlobalEventHandler;
@@ -19,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Random;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class OpukaMinestom extends Extension {
@@ -116,6 +121,16 @@ public class OpukaMinestom extends Extension {
   private static class MinestomMethods extends Opuka.Methods {
     public MinestomMethods(long seed) {
       this.random = new Random(seed);
+    }
+
+    @Override
+    public ConfigInventory createCI(UUID owner) {
+      return new CInvMinestom(owner);
+    }
+
+    @Override
+    public GameGridInventory createGGI(UUID owner, int minesCount) {
+      return new GGInvMinestom(owner, minesCount);
     }
 
     @Override

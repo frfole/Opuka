@@ -26,12 +26,6 @@ public class CInvMinestom extends ConfigInventory {
   }
 
   @Override
-  protected void createGame(int minesCount, UUID performer) {
-    final GameGridInventory ggi = new GGInvMinestom(54, performer, minesCount);
-    Opuka.getInstance().methods.setPlayerGGI(performer, ggi);
-  }
-
-  @Override
   public void destroy() {
     Set<Player> players = inv.getViewers();
     players.forEach(player -> {

@@ -13,13 +13,57 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
+import static ml.frfole.opuka.common.gamegrid.GameGrid.FieldType.*;
+
 public class GGInvBukkit extends GameGridInventory {
   private final Inventory inv;
 
-  public GGInvBukkit(int size, UUID uuid, int minesCount) {
+  public GGInvBukkit(UUID uuid, int minesCount) {
     super(uuid, 6, 9, minesCount);
-    this.inv = Bukkit.createInventory(null, size, invName);
+    this.inv = Bukkit.createInventory(null, 54, invName);
     this.open(uuid);
+  }
+
+  public static ItemStack getItem(GameGrid.FieldType type, GameGrid.State state) {
+    ItemStack item = new ItemStack(Material.STONE);
+    if (type.isUnknown()) {
+      item = new ItemStack(state.isFinished() && type == UNKNOWN_MINE
+              ? Material.RED_STAINED_GLASS_PANE
+              : Material.LIME_STAINED_GLASS_PANE);
+      ItemUtils.setName(item, state.isFinished() && type == UNKNOWN_MINE ? "Mine" : "Unknown");
+      ItemUtils.setLore(item,
+              Arrays.asList("Right click to flag.", "Left click to dig."));
+      return item;
+    }
+    else if (type.isFlagged()) {
+      item = new ItemStack(state.isFinished() && type == UNKNOWN_FLAG_MINE
+              ? Material.RED_STAINED_GLASS_PANE
+              : Material.BLACK_STAINED_GLASS_PANE);
+      ItemUtils.setName(item, state.isFinished() && type == UNKNOWN_FLAG_MINE ? "Mine" : "Flag");
+      ItemUtils.setLore(item, Arrays.asList("Right click to un-flag."));
+      return item;
+    }
+    else if (type.isKnown()) {
+      if (type == MINE)
+        return new ItemStack(Material.RED_STAINED_GLASS_PANE);
+      int count = 0;
+      switch (type) {
+        case NEAR_1: count = 1; break;
+        case NEAR_2: count = 2; break;
+        case NEAR_3: count = 3; break;
+        case NEAR_4: count = 4; break;
+        case NEAR_5: count = 5; break;
+        case NEAR_6: count = 6; break;
+        case NEAR_7: count = 7; break;
+        case NEAR_8: count = 8; break;
+        default: break;
+      }
+      item = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE, count);
+      ItemUtils.setName(item, count + " mine(s) nearby");
+      ItemUtils.setLore(item, Arrays.asList("There is nearby " + count + " mine(s)"));
+      return item;
+    }
+    return item;
   }
 
   @Override
@@ -29,7 +73,7 @@ public class GGInvBukkit extends GameGridInventory {
     final String timeDeltaS = ((timeDelta / 60000) % 60) + ":" + ((timeDelta / 1000) % 60 + "." + (timeDelta % 1000));
     for (int y = 0; y < gameGrid.getHeight(); y++) {
       for (int x = 0; x < gameGrid.getWidth(); x++) {
-        this.inv.setItem(y*9 + x, ItemUtils.getItem(grid[y][x], gameGrid.getState()));
+        this.inv.setItem(y*9 + x, getItem(grid[y][x], gameGrid.getState()));
       }
     }
     // time item

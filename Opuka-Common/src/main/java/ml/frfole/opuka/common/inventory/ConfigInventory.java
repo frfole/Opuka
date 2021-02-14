@@ -19,7 +19,14 @@ public abstract class ConfigInventory extends InventoryBase {
     this.invName = Opuka.getInstance().getLangManager().get("opuka.inventory.config.name");
   }
 
-  protected abstract void createGame(final int minesCount, final UUID performer);
+  /**
+   * Opens new game for performer with selected properties.
+   * @param minesCount the amount of mines
+   * @param performer  the {@link UUID} of player
+   */
+  protected void createGame(final int minesCount, final UUID performer) {
+    Opuka.getInstance().methods.setPlayerGGI(performer, Opuka.getInstance().methods.createGGI(performer, minesCount));
+  }
 
   @Override
   public void rightClick(final int slot, final int width, final UUID performer) {

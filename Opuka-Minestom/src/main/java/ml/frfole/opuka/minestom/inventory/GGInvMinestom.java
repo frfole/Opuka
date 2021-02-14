@@ -20,7 +20,7 @@ import static ml.frfole.opuka.common.gamegrid.GameGrid.FieldType.*;
 public class GGInvMinestom extends GameGridInventory {
   private final Inventory inv;
 
-  public GGInvMinestom(int size, UUID ownerId, int minesCount) {
+  public GGInvMinestom(UUID ownerId, int minesCount) {
     super(ownerId, 6, 9, minesCount);
     this.inv = new Inventory(InventoryType.CHEST_6_ROW, this.invName);
     this.open(ownerId);

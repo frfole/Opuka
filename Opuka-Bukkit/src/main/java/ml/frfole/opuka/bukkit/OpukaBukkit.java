@@ -1,13 +1,18 @@
 package ml.frfole.opuka.bukkit;
 
 import ml.frfole.opuka.bukkit.commands.OpukaCommand;
+import ml.frfole.opuka.bukkit.inventory.CInvBukkit;
+import ml.frfole.opuka.bukkit.inventory.GGInvBukkit;
 import ml.frfole.opuka.bukkit.listeners.InventoryListener;
 import ml.frfole.opuka.common.Opuka;
+import ml.frfole.opuka.common.inventory.ConfigInventory;
+import ml.frfole.opuka.common.inventory.GameGridInventory;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Random;
+import java.util.UUID;
 
 public class OpukaBukkit extends JavaPlugin {
   private static OpukaBukkit instance;
@@ -26,6 +31,7 @@ public class OpukaBukkit extends JavaPlugin {
   @Override
   public void onDisable() {
     super.onDisable();
+    Opuka.getInstance().methods.shutdown();
     HandlerList.unregisterAll(this.inventoryListener);
     Bukkit.getScheduler().cancelTask(this.taskTickN);
   }
@@ -49,6 +55,21 @@ public class OpukaBukkit extends JavaPlugin {
 
     public BukkitMethods(long seed) {
       this.random = new Random(seed);
+    }
+
+    @Override
+    public ConfigInventory createCI(UUID owner) {
+      return new CInvBukkit(owner);
+    }
+
+    @Override
+    public GameGridInventory createGGI(UUID owner, int minesCount) {
+      return new GGInvBukkit(owner, minesCount);
+    }
+
+    @Override
+    public void shutdown() {
+      super.shutdown();
     }
   }
 }
