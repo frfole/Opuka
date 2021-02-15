@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>Opuka</artifactId>
+        <artifactId>opuka</artifactId>
         <groupId>ml.frfole.opuka</groupId>
-        <version>0.1.7</version>
+        <version>0.1.9</version>
     </parent>
 
-    <artifactId>Opuka-Common</artifactId>
+    <artifactId>opuka-common</artifactId>
     <packaging>jar</packaging>
 
     <properties>

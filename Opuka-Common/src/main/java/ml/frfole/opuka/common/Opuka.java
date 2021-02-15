@@ -73,6 +73,15 @@ public class Opuka {
     public abstract void callEventGameFinish(GameGrid gameGrid, UUID owner);
 
     /**
+     * Reloads {@link LangManager} and others.
+     */
+    public void reload() {
+      uuid2CI.keySet().forEach(this::removePlayerCI);
+      uuid2GGI.keySet().forEach(this::removePlayerGGI);
+      Opuka.getInstance().langManager.load();
+    }
+
+    /**
      * Called when should be shutdown.
      */
     public void shutdown() {

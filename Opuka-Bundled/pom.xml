@@ -3,13 +3,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <artifactId>Opuka</artifactId>
+        <artifactId>opuka</artifactId>
         <groupId>ml.frfole.opuka</groupId>
-        <version>0.1.7</version>
+        <version>0.1.9</version>
     </parent>
 
-    <artifactId>Opuka-Bundled</artifactId>
+    <artifactId>opuka-bundled</artifactId>
     <packaging>jar</packaging>
 
     <properties>
@@ -20,13 +21,13 @@
     <dependencies>
         <dependency>
             <groupId>ml.frfole.opuka</groupId>
-            <artifactId>Opuka-Bukkit</artifactId>
+            <artifactId>opuka-bukkit</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>ml.frfole.opuka</groupId>
-            <artifactId>Opuka-Minestom</artifactId>
+            <artifactId>opuka-minestom</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>

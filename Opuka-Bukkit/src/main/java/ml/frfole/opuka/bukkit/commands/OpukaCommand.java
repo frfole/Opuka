@@ -25,6 +25,12 @@ public class OpukaCommand implements TabExecutor {
         } else if (args.length == 1) {
           if (args[0].equalsIgnoreCase("play") || args[0].equalsIgnoreCase("p")) {
             base.play(performer, 8);
+          } else if (args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("r")) {
+            if (sender.hasPermission("opuka.command.opuka.reload")) {
+              Opuka.getInstance().methods.reload();
+            } else {
+              sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.error.no_perms").split("\n"));
+            }
           } else {
             sender.sendMessage(Opuka.getInstance().getLangManager().get("opuka.command.opuka.usage.1").split("\n"));
           }
