@@ -7,7 +7,7 @@
     <groupId>ml.frfole.opuka</groupId>
     <artifactId>opuka</artifactId>
     <packaging>pom</packaging>
-    <version>0.1.9</version>
+    <version>0.1.10</version>
 
     <modules>
         <module>opuka-bukkit</module>

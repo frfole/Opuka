@@ -77,6 +77,8 @@ public class OpukaBukkit extends JavaPlugin {
     @Override
     public void shutdown() {
       super.shutdown();
+      if (OpukaBukkit.instance.isEnabled())
+        Bukkit.getPluginManager().disablePlugin(OpukaBukkit.getInstance());
     }
   }
 }

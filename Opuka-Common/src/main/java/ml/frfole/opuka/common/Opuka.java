@@ -76,8 +76,10 @@ public class Opuka {
      * Reloads {@link LangManager} and others.
      */
     public void reload() {
-      uuid2CI.keySet().forEach(this::removePlayerCI);
-      uuid2GGI.keySet().forEach(this::removePlayerGGI);
+      Set<UUID> a = uuid2CI.keySet();
+      a.forEach(this::removePlayerCI);
+      a = uuid2GGI.keySet();
+      a.forEach(this::removePlayerGGI);
       Opuka.getInstance().langManager.load();
     }
 
@@ -85,8 +87,10 @@ public class Opuka {
      * Called when should be shutdown.
      */
     public void shutdown() {
-      uuid2CI.keySet().forEach(this::removePlayerCI);
-      uuid2GGI.keySet().forEach(this::removePlayerGGI);
+      Set<UUID> a = uuid2CI.keySet();
+      a.forEach(this::removePlayerCI);
+      a = uuid2GGI.keySet();
+      a.forEach(this::removePlayerGGI);
     }
 
     /**

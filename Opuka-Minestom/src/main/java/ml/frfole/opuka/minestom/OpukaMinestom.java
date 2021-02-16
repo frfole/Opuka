@@ -138,5 +138,11 @@ public class OpukaMinestom extends Extension {
       super.tick();
       OpukaMinestom.instance.opukaCommand.update();
     }
+
+    @Override
+    public void shutdown() {
+      super.shutdown();
+      MinecraftServer.getExtensionManager().unloadExtension(OpukaMinestom.getInstance().getDescription().getName());
+    }
   }
 }
